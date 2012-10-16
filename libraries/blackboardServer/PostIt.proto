@@ -1,0 +1,46 @@
+package nl.hu.blackboard.data;
+
+option java_package = "nl.hu.blackboard.data";
+option java_outer_classname = "PostItProtos";
+
+
+
+
+message PostIt
+{
+	optional int64 timestep = 1;
+	
+	required string payload = 2;
+	
+	optional string owner = 3;
+	
+	optional bool isProcessed = 4;
+	
+	optional int32 ordinal = 5;
+	
+	optional string productRef = 6;
+}
+
+message PostItBox 
+{
+	required bool isWrite = 1;
+	
+	required string zone = 2;
+
+	repeated PostIt postIts = 3;
+		
+	optional string readOwner = 4;
+	
+	optional int64 currentTimeStep = 5;
+	
+	message Filter
+	{
+		required string filtername = 1;	
+		repeated string agentname = 2;		
+		optional int64 deadline = 3;	
+
+	}
+
+	optional Filter filter = 6;
+
+}

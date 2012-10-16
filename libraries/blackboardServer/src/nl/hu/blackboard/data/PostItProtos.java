@@ -55,12 +55,12 @@ public final class PostItProtos {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostIt_descriptor;
+      return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostIt_descriptor;
     }
     
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostIt_fieldAccessorTable;
+      return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostIt_fieldAccessorTable;
     }
     
     private int bitField0_;
@@ -362,12 +362,12 @@ public final class PostItProtos {
        implements nl.hu.blackboard.data.PostItProtos.PostItOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostIt_descriptor;
+        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostIt_descriptor;
       }
       
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostIt_fieldAccessorTable;
+        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostIt_fieldAccessorTable;
       }
       
       // Construct using nl.hu.blackboard.data.PostItProtos.PostIt.newBuilder()
@@ -804,12 +804,12 @@ public final class PostItProtos {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostItBox_descriptor;
+      return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostItBox_descriptor;
     }
     
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostItBox_fieldAccessorTable;
+      return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostItBox_fieldAccessorTable;
     }
     
     public interface FilterOrBuilder
@@ -848,12 +848,12 @@ public final class PostItProtos {
       
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostItBox_Filter_descriptor;
+        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostItBox_Filter_descriptor;
       }
       
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostItBox_Filter_fieldAccessorTable;
+        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostItBox_Filter_fieldAccessorTable;
       }
       
       private int bitField0_;
@@ -1066,12 +1066,12 @@ public final class PostItProtos {
          implements nl.hu.blackboard.data.PostItProtos.PostItBox.FilterOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
-          return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostItBox_Filter_descriptor;
+          return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostItBox_Filter_descriptor;
         }
         
         protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostItBox_Filter_fieldAccessorTable;
+          return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostItBox_Filter_fieldAccessorTable;
         }
         
         // Construct using nl.hu.blackboard.data.PostItProtos.PostItBox.Filter.newBuilder()
@@ -1670,12 +1670,12 @@ public final class PostItProtos {
        implements nl.hu.blackboard.data.PostItProtos.PostItBoxOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostItBox_descriptor;
+        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostItBox_descriptor;
       }
       
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_lcv_blackboard_data_PostItBox_fieldAccessorTable;
+        return nl.hu.blackboard.data.PostItProtos.internal_static_nl_hu_blackboard_data_PostItBox_fieldAccessorTable;
       }
       
       // Construct using nl.hu.blackboard.data.PostItProtos.PostItBox.newBuilder()
@@ -2341,20 +2341,20 @@ public final class PostItProtos {
   }
   
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_nl_hu_lcv_blackboard_data_PostIt_descriptor;
+    internal_static_nl_hu_blackboard_data_PostIt_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_nl_hu_lcv_blackboard_data_PostIt_fieldAccessorTable;
+      internal_static_nl_hu_blackboard_data_PostIt_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_nl_hu_lcv_blackboard_data_PostItBox_descriptor;
+    internal_static_nl_hu_blackboard_data_PostItBox_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_nl_hu_lcv_blackboard_data_PostItBox_fieldAccessorTable;
+      internal_static_nl_hu_blackboard_data_PostItBox_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_nl_hu_lcv_blackboard_data_PostItBox_Filter_descriptor;
+    internal_static_nl_hu_blackboard_data_PostItBox_Filter_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_nl_hu_lcv_blackboard_data_PostItBox_Filter_fieldAccessorTable;
+      internal_static_nl_hu_blackboard_data_PostItBox_Filter_fieldAccessorTable;
   
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2364,45 +2364,45 @@ public final class PostItProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014PostIt.proto\022\031nl.hu.blackboard.dat" +
-      "a\"t\n\006PostIt\022\020\n\010timestep\030\001 \001(\003\022\017\n\007payload" +
-      "\030\002 \002(\t\022\r\n\005owner\030\003 \001(\t\022\023\n\013isProcessed\030\004 \001" +
-      "(\010\022\017\n\007ordinal\030\005 \001(\005\022\022\n\nproductRef\030\006 \001(\t\"" +
-      "\212\002\n\tPostItBox\022\017\n\007isWrite\030\001 \002(\010\022\014\n\004zone\030\002" +
-      " \002(\t\0222\n\007postIts\030\003 \003(\0132!.nl.hu.blackb" +
-      "oard.data.PostIt\022\021\n\treadOwner\030\004 \001(\t\022\027\n\017c" +
-      "urrentTimeStep\030\005 \001(\003\022;\n\006filter\030\006 \001(\0132+.n" +
-      "l.hu.blackboard.data.PostItBox.Filte" +
-      "r\032A\n\006Filter\022\022\n\nfiltername\030\001 \002(\t\022\021\n\tagent",
-      "name\030\002 \003(\t\022\020\n\010deadline\030\003 \001(\003B)\n\031nl.hu.lc" +
-      "v.blackboard.dataB\014PostItProtos"
+      "\n\014PostIt.proto\022\025nl.hu.blackboard.data\"t\n" +
+      "\006PostIt\022\020\n\010timestep\030\001 \001(\003\022\017\n\007payload\030\002 \002" +
+      "(\t\022\r\n\005owner\030\003 \001(\t\022\023\n\013isProcessed\030\004 \001(\010\022\017" +
+      "\n\007ordinal\030\005 \001(\005\022\022\n\nproductRef\030\006 \001(\t\"\202\002\n\t" +
+      "PostItBox\022\017\n\007isWrite\030\001 \002(\010\022\014\n\004zone\030\002 \002(\t" +
+      "\022.\n\007postIts\030\003 \003(\0132\035.nl.hu.blackboard.dat" +
+      "a.PostIt\022\021\n\treadOwner\030\004 \001(\t\022\027\n\017currentTi" +
+      "meStep\030\005 \001(\003\0227\n\006filter\030\006 \001(\0132\'.nl.hu.bla" +
+      "ckboard.data.PostItBox.Filter\032A\n\006Filter\022" +
+      "\022\n\nfiltername\030\001 \002(\t\022\021\n\tagentname\030\002 \003(\t\022\020",
+      "\n\010deadline\030\003 \001(\003B%\n\025nl.hu.blackboard.dat" +
+      "aB\014PostItProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(
             com.google.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
-          internal_static_nl_hu_lcv_blackboard_data_PostIt_descriptor =
+          internal_static_nl_hu_blackboard_data_PostIt_descriptor =
             getDescriptor().getMessageTypes().get(0);
-          internal_static_nl_hu_lcv_blackboard_data_PostIt_fieldAccessorTable = new
+          internal_static_nl_hu_blackboard_data_PostIt_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_nl_hu_lcv_blackboard_data_PostIt_descriptor,
+              internal_static_nl_hu_blackboard_data_PostIt_descriptor,
               new java.lang.String[] { "Timestep", "Payload", "Owner", "IsProcessed", "Ordinal", "ProductRef", },
               nl.hu.blackboard.data.PostItProtos.PostIt.class,
               nl.hu.blackboard.data.PostItProtos.PostIt.Builder.class);
-          internal_static_nl_hu_lcv_blackboard_data_PostItBox_descriptor =
+          internal_static_nl_hu_blackboard_data_PostItBox_descriptor =
             getDescriptor().getMessageTypes().get(1);
-          internal_static_nl_hu_lcv_blackboard_data_PostItBox_fieldAccessorTable = new
+          internal_static_nl_hu_blackboard_data_PostItBox_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_nl_hu_lcv_blackboard_data_PostItBox_descriptor,
+              internal_static_nl_hu_blackboard_data_PostItBox_descriptor,
               new java.lang.String[] { "IsWrite", "Zone", "PostIts", "ReadOwner", "CurrentTimeStep", "Filter", },
               nl.hu.blackboard.data.PostItProtos.PostItBox.class,
               nl.hu.blackboard.data.PostItProtos.PostItBox.Builder.class);
-          internal_static_nl_hu_lcv_blackboard_data_PostItBox_Filter_descriptor =
-            internal_static_nl_hu_lcv_blackboard_data_PostItBox_descriptor.getNestedTypes().get(0);
-          internal_static_nl_hu_lcv_blackboard_data_PostItBox_Filter_fieldAccessorTable = new
+          internal_static_nl_hu_blackboard_data_PostItBox_Filter_descriptor =
+            internal_static_nl_hu_blackboard_data_PostItBox_descriptor.getNestedTypes().get(0);
+          internal_static_nl_hu_blackboard_data_PostItBox_Filter_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_nl_hu_lcv_blackboard_data_PostItBox_Filter_descriptor,
+              internal_static_nl_hu_blackboard_data_PostItBox_Filter_descriptor,
               new java.lang.String[] { "Filtername", "Agentname", "Deadline", },
               nl.hu.blackboard.data.PostItProtos.PostItBox.Filter.class,
               nl.hu.blackboard.data.PostItProtos.PostItBox.Filter.Builder.class);
