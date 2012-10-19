@@ -51,6 +51,45 @@ deltaRobotNodeNamespace::DeltaRobotNode::DeltaRobotNode(int equipletID, int modu
 
 	ros::ServiceServer calibrateService =
 		nodeHandle.advertiseService(DeltaRobotNodeServices::CALIBRATE, &deltaRobotNodeNamespace::DeltaRobotNode::calibrate, this); 
+
+	// Initialize modbus for IO controller
+    modbus_t* modbusIO = modbus_new_tcp("192.168.0.2", 502);
+    if(modbusIO == NULL)
+    {
+        throw std::runtime_error("Unable to allocate libmodbus context");
+    }
+    if(modbus_connect(modbusIO) == -1)
+    {
+        throw std::runtime_error("Modbus connection to IO controller failed");
+    }
+    assert(modbusIO != NULL);
+
+    DataTypes::DeltaRobotMeasures drm;
+    drm.base = DeltaRobot::Measures::BASE;
+    drm.hip = DeltaRobot::Measures::HIP;
+    drm.effector = DeltaRobot::Measures::EFFECTOR;
+    drm.ankle = DeltaRobot::Measures::ANKLE;
+    drm.maxAngleHipAnkle = DeltaRobot::Measures::HIP_ANKLE_ANGLE_MAX;
+
+
+    ModbusController::ModbusController* modbus = new ModbusController::ModbusController(modbus_new_rtu(
+        "/dev/ttyS0",
+        Motor::CRD514KD::RtuConfig::BAUDRATE,
+        Motor::CRD514KD::RtuConfig::PARITY,
+        Motor::CRD514KD::RtuConfig::DATA_BITS,
+        Motor::CRD514KD::RtuConfig::STOP_BITS));
+
+
+    Motor::StepperMotor* motors[3];
+    motors[0] = new Motor::StepperMotor(modbus, Motor::CRD514KD::Slaves::MOTOR_0, DeltaRobot::Measures::MOTOR_ROT_MIN, DeltaRobot::Measures::MOTOR_ROT_MAX);
+    motors[1] = new Motor::StepperMotor(modbus, Motor::CRD514KD::Slaves::MOTOR_1, DeltaRobot::Measures::MOTOR_ROT_MIN, DeltaRobot::Measures::MOTOR_ROT_MAX);
+    motors[2] = new Motor::StepperMotor(modbus, Motor::CRD514KD::Slaves::MOTOR_2, DeltaRobot::Measures::MOTOR_ROT_MIN, DeltaRobot::Measures::MOTOR_ROT_MAX);
+
+    Motor::MotorManager* motorManager = new Motor::MotorManager(modbus, motors, 3);
+
+	// Create a deltarobot	
+    deltaRobot = new DeltaRobot::DeltaRobot(drm, motorManager, motors, modbusIO);
+
 	StateMachine::StateEngine();
 }
 
@@ -63,6 +102,11 @@ deltaRobotNodeNamespace::DeltaRobotNode::DeltaRobotNode(int equipletID, int modu
  */
 bool deltaRobotNodeNamespace::DeltaRobotNode::calibrate(deltaRobotNode::Calibrate::Request &req,
 	deltaRobotNode::Calibrate::Response &res) {
+
+	if(currentState != rosMast::normal) {
+		return false;
+	}
+
     // Calibrate the motors
     if(!deltaRobot->calibrateMotors()){
     	ROS_ERROR("Calibration FAILED. EXITING.");
@@ -82,6 +126,11 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::calibrate(deltaRobotNode::Calibrat
 bool deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint(deltaRobotNode::MoveToPoint::Request &req,
 	deltaRobotNode::MoveToPoint::Response &res) {
 	ROS_INFO("moveToPoint called");
+
+	if(currentState != rosMast::normal) {
+		return false;
+	}
+
 	DataTypes::Point3D<double>& effectorLocation = deltaRobot->getEffectorLocation();
 	deltaRobotNode::Motion motion = req.motion;
 	/**
@@ -112,6 +161,11 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint(deltaRobotNode::MoveTo
 bool deltaRobotNodeNamespace::DeltaRobotNode::movePath(deltaRobotNode::MovePath::Request &req,
 	deltaRobotNode::MovePath::Response &res) {
 	ROS_INFO("movePath called");
+
+	if(currentState != rosMast::normal) {
+		return false;
+	}
+
 	deltaRobotNode::Motion currentMotion;
 	deltaRobotNode::Motion nextMotion;
 	try
@@ -159,6 +213,11 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::movePath(deltaRobotNode::MovePath:
 bool deltaRobotNodeNamespace::DeltaRobotNode::moveToRelativePoint(deltaRobotNode::MoveToRelativePoint::Request &req,
 	deltaRobotNode::MoveToRelativePoint::Response &res) {
 	ROS_INFO("moveToRelativePoint called");
+
+	if(currentState != rosMast::normal) {
+		return false;
+	}
+
 	deltaRobotNode::Motion currentMotion;
 	try {
 		currentMotion = req.motion;
@@ -202,6 +261,10 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::moveToRelativePoint(deltaRobotNode
 bool deltaRobotNodeNamespace::DeltaRobotNode::moveRelativePath(deltaRobotNode::MoveRelativePath::Request &req,
 	deltaRobotNode::MoveRelativePath::Response &res) {
 	ROS_INFO("moveRelativePath called");
+
+	if(currentState != rosMast::normal) {
+		return false;
+	}
 
 	deltaRobotNode::Motion currentMotion;
 	double relativeX;
@@ -263,44 +326,7 @@ int deltaRobotNodeNamespace::DeltaRobotNode::transitionSetup() {
 	setState(rosMast::setup);
 
 	ROS_INFO("Setup transition called");	
-	// Initialize modbus for IO controller
-    modbus_t* modbusIO = modbus_new_tcp("192.168.0.2", 502);
-    if(modbusIO == NULL)
-    {
-        throw std::runtime_error("Unable to allocate libmodbus context");
-    }
-    if(modbus_connect(modbusIO) == -1)
-    {
-        throw std::runtime_error("Modbus connection to IO controller failed");
-    }
-    assert(modbusIO != NULL);
-
-    DataTypes::DeltaRobotMeasures drm;
-    drm.base = DeltaRobot::Measures::BASE;
-    drm.hip = DeltaRobot::Measures::HIP;
-    drm.effector = DeltaRobot::Measures::EFFECTOR;
-    drm.ankle = DeltaRobot::Measures::ANKLE;
-    drm.maxAngleHipAnkle = DeltaRobot::Measures::HIP_ANKLE_ANGLE_MAX;
-
-
-    ModbusController::ModbusController* modbus = new ModbusController::ModbusController(modbus_new_rtu(
-        "/dev/ttyS0",
-        Motor::CRD514KD::RtuConfig::BAUDRATE,
-        Motor::CRD514KD::RtuConfig::PARITY,
-        Motor::CRD514KD::RtuConfig::DATA_BITS,
-        Motor::CRD514KD::RtuConfig::STOP_BITS));
-
-
-    Motor::StepperMotor* motors[3];
-    motors[0] = new Motor::StepperMotor(modbus, Motor::CRD514KD::Slaves::MOTOR_0, DeltaRobot::Measures::MOTOR_ROT_MIN, DeltaRobot::Measures::MOTOR_ROT_MAX);
-    motors[1] = new Motor::StepperMotor(modbus, Motor::CRD514KD::Slaves::MOTOR_1, DeltaRobot::Measures::MOTOR_ROT_MIN, DeltaRobot::Measures::MOTOR_ROT_MAX);
-    motors[2] = new Motor::StepperMotor(modbus, Motor::CRD514KD::Slaves::MOTOR_2, DeltaRobot::Measures::MOTOR_ROT_MIN, DeltaRobot::Measures::MOTOR_ROT_MAX);
-
-    Motor::MotorManager* motorManager = new Motor::MotorManager(modbus, motors, 3);
-
-	// Create a deltarobot	
-    deltaRobot = new DeltaRobot::DeltaRobot(drm, motorManager, motors, modbusIO);
-
+	
     // Generate the effector boundaries with voxel size 2
     deltaRobot->generateBoundaries(2);
 
@@ -311,33 +337,37 @@ int deltaRobotNodeNamespace::DeltaRobotNode::transitionSetup() {
     if(!deltaRobot->calibrateMotors()){
     	ROS_ERROR("Calibration FAILED. EXITING.");
     	return 1;
-    } 	
-	return 0;
+    } 
+	return 0; 
 }
 
 int deltaRobotNodeNamespace::DeltaRobotNode::transitionShutdown() {
-	setState(rosMast::shutdown);
+	
 	ROS_INFO("Shutdown transition called");
+	
+	setState(rosMast::shutdown);
 	deltaRobot->powerOff();
 	return 0;
 }
 
 int deltaRobotNodeNamespace::DeltaRobotNode::transitionStart() {
 	setState(rosMast::start);
+	
 	ROS_INFO("Start transition called");
     
     // Calibrate the motors
     if(!deltaRobot->calibrateMotors()){
     	ROS_ERROR("Calibration FAILED. EXITING.");
     	return 1;
-    } 	
-	
+    }	
 	return 0;
 }
 
 int deltaRobotNodeNamespace::DeltaRobotNode::transitionStop() {
-	setState(rosMast::stop);
 	ROS_INFO("Stop transition called");
+	
+	setState(rosMast::stop);
+
 	return 0;
 }
 

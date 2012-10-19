@@ -31,13 +31,12 @@
 
 #include "ros/ros.h"
 #include "rosMast/StateChanged.h"
+#include "rosMast/States.h"
+#include <boost/unordered_map.hpp>
 
 #define TRANSITIONMAP_SIZE 4
 
 namespace rosMast {
-
-	typedef enum {safe = 0, setup = 1, shutdown = 2, standby = 3, start = 4, stop = 5, normal = 6, nostate = 7 } StateType;
-
 	struct StateTransition 
 	{
 		StateTransition() { }
@@ -50,13 +49,13 @@ namespace rosMast {
 
 		friend bool operator < (const StateTransition& id1, const StateTransition &other) 
 		{
-			if(id1.DestinationState < other.DestinationState && id1.SourceState < other.SourceState) {
-				return true;
-			} 
-			return false;
+			if(id1.SourceState == other.SourceState) {
+				return id1.DestinationState < other.DestinationState;
+			}				
+			return id1.SourceState < other.SourceState;
 		}
 	};
-
+	
 	class StateMachine {
 		//Function pointer to transitionFunction or StateFunction
 		typedef int (StateMachine::*stateFunctionPtr)();
@@ -84,14 +83,16 @@ namespace rosMast {
 		
 		protected:
 			bool locked;
-		
+			StateType currentState;
+
 			ros::Publisher pub;
 			ros::Subscriber sub;
 
-		private:
-			StateType currentState;
+		private:		
 			int myequipletid;
 			int mymoduleid;
+
+		
 	};
 
 }
