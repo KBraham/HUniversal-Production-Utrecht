@@ -193,10 +193,11 @@ void EquipletNode::printHardwareModules() {
  **/
 void EquipletNode::readFromBlackboard() {
     PostItBox_Filter * f = postItBox->mutable_filter();
-    PostItBox * received = new PostItBox();
+    //PostItBox * received = new PostItBox();
     f->set_filtername("PostItFilter");
-	bbUtils.readFromBlackboard(postItBox);
-	std::cout << "Number of postIts: " << received->postits_size() << std::endl;
+	postItBox = bbUtils.readFromBlackboard(postItBox);
+	std::cout << "Number of postIts: " << postItBox->postits_size() << std::endl;
+	std::cout << "Payload:" << postItBox->postits(0).payload() << std::endl;
 }
 
 /**

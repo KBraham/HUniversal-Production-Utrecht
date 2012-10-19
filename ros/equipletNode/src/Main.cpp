@@ -119,6 +119,8 @@ int main(int argc, char **argv) {
 
 	publisher.publish(msg);	
 
+	equipletNode->readFromBlackboard();
+
 	while(ros::ok()) {
 		poll_rate.sleep();
 		ros::spinOnce();	

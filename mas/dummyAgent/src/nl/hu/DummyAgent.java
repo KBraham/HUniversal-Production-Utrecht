@@ -46,13 +46,6 @@ public class DummyAgent extends Agent
 			{
 				System.out.println("No autoKeyStoreServer found :O");
 			}
-
-	     
-
-					 			   
-			
-
-
 		}
 
 		this.addBehaviour(new CyclicBehaviour()
@@ -71,10 +64,6 @@ public class DummyAgent extends Agent
 				
 			}
 		});
-		
-
-
-
 	}
 	
 
