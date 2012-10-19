@@ -94,7 +94,7 @@ public class BlackboardThread implements Runnable
 			//(PostItBox)ois.readObject();		
 			initBlackboardAccess(postItBox);										
 			//might be switch
-			if(postItBox.getIsWrite())							
+			if(postItBox.getIsWrite())											
 				write(postItBox);						
 			else 			
 				read(postItBox);		

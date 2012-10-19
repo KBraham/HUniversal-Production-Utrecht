@@ -69,10 +69,22 @@
     </jar>
   </target>
 
+    <!-- Dummy Agent-->
+  <target name="dummyAgent" depends="openBBS, autoKeyStoreJava">
+    <mkdir dir="${distdir}/dummyAgent"/>
+    <javac 
+      srcdir="mas/dummyAgent/src" 
+      destdir="${distdir}/dummyAgent"
+      classpath="dist/${autoKeyStoreJava}:dist/blackboardServer.jar:libraries/jade.jar"
+      includeantruntime="true">
+    </javac>
+  </target>
+
+
 
 
   <!-- ADD ALL LIBRARIES HERE-->
-  <target name="build"  depends="init, openBBS, autoKeyStoreServer, autoKeyStoreJava, blackBoardServer">
+  <target name="build"  depends="init, openBBS, autoKeyStoreServer, autoKeyStoreJava, blackBoardServer, dummyAgent">
       <delete dir="${builddir}"/>
   </target>
 
