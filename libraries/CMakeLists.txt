@@ -1,3 +1,3 @@
 include_directories("Datatypes/include")
 
-add_subdirectories("dataTypes;motor;modbusController;utilities;deltaRobot;vision")
+add_subdirectories("dataTypes;motor;modbusController;utilities;deltaRobot;vision;tinyxml2")

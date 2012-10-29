@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<resources>
+	<workspace type="GLASSPLATE">
+		<itemholder type="CRATE">
+			<item>
+				<var name="type" attrib="BEAD"/>
+				<var name="weight" attrib="20"/>
+				<var name="dlocation" attrib="3|3"/>
+			</item>
+		</itemholder>
+	</workspace>
+</resources>
