@@ -30,15 +30,16 @@
 
 #pragma once
 
-#include <tinyxml2/tinyxml2.h>
+#include <string>
+#include <tinyxpath/xpath_processor.h>
 
 class EnvironmentNode {
 public:
-	EnvironmentNode(const char *file);
+	EnvironmentNode(const char *filename);
+	void numberOfResources(const std::string &name);
 private:
 	/**
 	 * The resource database. Temporarily implemented as tinyxml2 XMLDocument object
 	 **/
-	tinyxml2::XMLDocument database;
-	tinyxml2::XMLElement *rootElement;
+	TiXmlDocument database;
 };

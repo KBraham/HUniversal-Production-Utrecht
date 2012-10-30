@@ -30,6 +30,7 @@
 
 #include "ros/ros.h"
 #include <environmentNode/EnvironmentNode.h>
+#include <iostream>
 
 int main(int argc, char **argv) {
 
@@ -38,8 +39,8 @@ int main(int argc, char **argv) {
 	}
 
 	ros::init(argc, argv, "EnvironmentNode");
-
 	EnvironmentNode environmentNode(argv[1]);
+	environmentNode.numberOfResources("");
 
 
 	ros::spin();

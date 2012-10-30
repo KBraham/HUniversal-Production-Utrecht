@@ -28,14 +28,16 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
- #include <environmentNode/EnvironmentNode.h>
- #include <iostream>
+#include <environmentNode/EnvironmentNode.h>
+#include <iostream>
 
- EnvironmentNode::EnvironmentNode(const char *filename) {
- 	database.LoadFile(filename);
- 	database.Print();
- 	rootElement = database.RootElement();
- 	if(rootElement->firstChildElement("workspace") != NULL) {
- 		
- 	}
- }
+EnvironmentNode::EnvironmentNode(const char *filename): database() {
+	database.LoadFile(filename);
+}
+
+void EnvironmentNode::numberOfResources(const std::string &name) {
+	TinyXPath::xpath_processor proc(database.RootElement(), "//resources/workspace/itemholder/item[@]");
+	//TinyXPath::expression_result result = proc.er_compute_xpath();
+	//TiXmlString result = proc.S_compute_xpath();
+	std::cout << proc.u_compute_xpath_node_set() << std::endl;
+}

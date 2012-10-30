@@ -1,11 +1,16 @@
 <?xml version="1.0"?>
 <resources>
-	<workspace type="GLASSPLATE">
-		<itemholder type="CRATE">
-			<item>
-				<var name="type" attrib="BEAD"/>
-				<var name="weight" attrib="20"/>
-				<var name="dlocation" attrib="3|3"/>
+	<workspace type="GLASSPLATE" id="1">
+		<itemholder type="CRATE" id="1">
+			<item type="BEAD" id="1">
+				<weight>20</weight>
+				<dlocation>3|3</dlocation>
+				<color>blue</color>
+			</item>
+			<item type="BEAD" id="2">
+				<weight>20</weight>
+				<dlocation>4|4</dlocation>
+				<color>blue</color>
 			</item>
 		</itemholder>
 	</workspace>

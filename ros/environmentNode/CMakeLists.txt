@@ -19,12 +19,12 @@ file(GLOB sources src/*.cpp)
 rosbuild_add_executable(EnvironmentNode ${sources})
 
 # Add dependencies to our libraries and other ROS packages in the same directory as this one.
-add_dependencies(EnvironmentNode tinyxml2)
+add_dependencies(EnvironmentNode tinyxpath)
 
 # Include our libraries, they are all exported in Libraries/LibrariesExport.cmake
-include_directories(${TINY_XML2})
+include_directories(${TINYXPATH})
 
-target_link_libraries(EnvironmentNode tinyxml2)
+target_link_libraries(EnvironmentNode tinyxpath)
 
 # MUST be called after lcv_rospack_init to clean up after ROSBUILD!
 rexos_rospack_end()
