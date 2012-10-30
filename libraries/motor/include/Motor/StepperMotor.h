@@ -109,6 +109,8 @@ namespace Motor{
         void setIncrementalMode();
         void setAbsoluteMode();
 
+        double getCurrentAngle();
+
     private:
         /**
          * @var double currentAngle

@@ -133,10 +133,6 @@ namespace DeltaRobot{
         rotations[1] = new DataTypes::MotorRotation();
         rotations[2] = new DataTypes::MotorRotation();
 
-        rotations[0]->speed = speed;
-        rotations[1]->speed = speed;
-        rotations[2]->speed = speed;
-
         try{
             kinematics->destinationPointToMotorRotations(point, rotations);
         } catch(InverseKinematicsException& ex){
@@ -162,10 +158,47 @@ namespace DeltaRobot{
 
         double moveTime = point.distance(effectorLocation) / speed;
         try{
-            motors[0]->moveToWithin(*rotations[0], moveTime, false);
-            motors[1]->moveToWithin(*rotations[1], moveTime, false);
-            motors[2]->moveToWithin(*rotations[2], moveTime, false);
-            motorManager->startMovement();
+            bool accelerationFits = true;
+
+            for(int i = 0; i < 3; i++){
+                // acceleration = (4 * motion relative angle) / motion time²
+                double relativeAngle = fabs(rotations[i]->angle - motors[i]->getCurrentAngle());
+                rotations[i]->acceleration = (4 * relativeAngle) / (moveTime * moveTime);
+                rotations[i]->deceleration = rotations[i]->acceleration;
+
+                if(rotations[i]->acceleration < Motor::CRD514KD::MOTOR_MIN_ACCELERATION){
+                    accelerationFits = false;
+                    break;
+                    //std::cout << "motor " << i << " " << rotations[i]->acceleration << " -> " << Motor::CRD514KD::MOTOR_MIN_ACCELERATION << std::endl;
+                    //rotations[i]->acceleration = Motor::CRD514KD::MOTOR_MIN_ACCELERATION;
+                    //rotations[i]->deceleration = Motor::CRD514KD::MOTOR_MIN_ACCELERATION;
+                } else if(rotations[i]->acceleration > Motor::CRD514KD::MOTOR_MAX_ACCELERATION){
+                    accelerationFits = false;
+                    break;
+                    //std::cout << "motor " << i << " " << rotations[i]->acceleration << " -> " << Motor::CRD514KD::MOTOR_MAX_ACCELERATION << std::endl;
+                    //rotations[i]->acceleration = Motor::CRD514KD::MOTOR_MAX_ACCELERATION;
+                    //rotations[i]->deceleration = Motor::CRD514KD::MOTOR_MAX_ACCELERATION;
+                }
+
+                rotations[i]->speed = rotations[i]->acceleration * (moveTime / 2);
+
+                std::cout << "Motor " << i << ": " << std::endl;
+                std::cout << "acc: " << rotations[i]->acceleration << std::endl;
+                std::cout << "dec: " << rotations[i]->deceleration << std::endl;
+                std::cout << "relative angle:  " << relativeAngle << std::endl;
+                std::cout << "intended time: " << moveTime << std::endl;
+                std::cout << "time based on acc: " << relativeAngle / (rotations[i]->acceleration * (moveTime / 4)) << std::endl;
+                std::cout << "Top speed: " << rotations[i]->speed << std::endl;
+                std::cout << "---------------------------------------------" << std::endl;
+                
+                motors[i]->writeRotationData(*rotations[i]);
+            }
+
+            if(accelerationFits) {
+                motorManager->startMovement();
+            } else {
+                std::cout << "Discarding motion" << std::endl;
+            }
         } catch(std::out_of_range& ex){
             delete rotations[0];
             delete rotations[1];

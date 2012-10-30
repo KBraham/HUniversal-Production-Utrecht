@@ -201,7 +201,9 @@ namespace Motor{
 		modbus->writeU32(motorIndex, CRD514KD::Registers::OP_SPEED, motorSpeed, true);
 		modbus->writeU32(motorIndex, CRD514KD::Registers::OP_POS, motorSteps, true);
 		modbus->writeU32(motorIndex, CRD514KD::Registers::OP_ACC, motorAcceleration, true);
+		modbus->writeU32(motorIndex, 0x224, motorAcceleration, true);
 		modbus->writeU32(motorIndex, CRD514KD::Registers::OP_DEC, motorDeceleration, true);
+		modbus->writeU32(motorIndex, 0x226, motorDeceleration, true);
 		setAngle = motorRotation.angle;
 	}
 
@@ -305,5 +307,9 @@ namespace Motor{
 	 **/
 	 void StepperMotor::setAbsoluteMode(){
 	 	modbus->writeU16(motorIndex, Motor::CRD514KD::Registers::OP_POSMODE, 1);
+	 }
+
+	 double StepperMotor::getCurrentAngle(){
+	 	return currentAngle;
 	 }
 }
