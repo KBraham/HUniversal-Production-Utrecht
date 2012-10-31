@@ -15,16 +15,17 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 rexos_rospack_init("environmentNode" true true)
 
 # Add executables as documented by ROS
+link_directories(${CMAKE_SOURCE_DIR}/libraries/mongo-cxx-driver)
 file(GLOB sources src/*.cpp)
 rosbuild_add_executable(EnvironmentNode ${sources})
 
 # Add dependencies to our libraries and other ROS packages in the same directory as this one.
-add_dependencies(EnvironmentNode tinyxpath)
+add_dependencies(EnvironmentNode mongo-cxx-driver)
 
 # Include our libraries, they are all exported in Libraries/LibrariesExport.cmake
-include_directories(${TINYXPATH})
+include_directories(${MONGO_CXX_DRIVER} ${Boost_INCLUDE_DIRS})
 
-target_link_libraries(EnvironmentNode tinyxpath)
+target_link_libraries(EnvironmentNode mongoclient boost_thread-mt boost_filesystem boost_program_options boost_system)
 
 # MUST be called after lcv_rospack_init to clean up after ROSBUILD!
 rexos_rospack_end()

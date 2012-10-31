@@ -31,19 +31,23 @@
 #include "ros/ros.h"
 #include <environmentNode/EnvironmentNode.h>
 #include <iostream>
+#include "mongo/client/dbclient.h"
+
+void run() {
+	mongo::DBClientConnection c;
+	c.connect("localhost");
+}
 
 int main(int argc, char **argv) {
+	ros::init(argc, argv, "EnvironmentNode");
 
-	if(argc < 2) {
-		std::cout << "No database file given as parameter. Starting with empty environment" << std::endl;
+	try {
+	  run();
+	  std::cout << "connected ok" << std::endl;
+	} catch( const mongo::DBException &e ) {
+	  std::cout << "caught " << e.what() << std::endl;
 	}
 
-	ros::init(argc, argv, "EnvironmentNode");
-	EnvironmentNode environmentNode(argv[1]);
-	environmentNode.numberOfResources("");
-
-
 	ros::spin();
-
 	return 0;
 }

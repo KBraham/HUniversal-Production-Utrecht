@@ -31,13 +31,7 @@
 #include <environmentNode/EnvironmentNode.h>
 #include <iostream>
 
-EnvironmentNode::EnvironmentNode(const char *filename): database() {
-	database.LoadFile(filename);
-}
+EnvironmentNode::EnvironmentNode(const char *filename){}
 
 void EnvironmentNode::numberOfResources(const std::string &name) {
-	TinyXPath::xpath_processor proc(database.RootElement(), "//resources/workspace/itemholder/item[@]");
-	//TinyXPath::expression_result result = proc.er_compute_xpath();
-	//TiXmlString result = proc.S_compute_xpath();
-	std::cout << proc.u_compute_xpath_node_set() << std::endl;
 }

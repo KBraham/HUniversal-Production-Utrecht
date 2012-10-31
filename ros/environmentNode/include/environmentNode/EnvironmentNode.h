@@ -31,15 +31,10 @@
 #pragma once
 
 #include <string>
-#include <tinyxpath/xpath_processor.h>
 
 class EnvironmentNode {
 public:
 	EnvironmentNode(const char *filename);
 	void numberOfResources(const std::string &name);
 private:
-	/**
-	 * The resource database. Temporarily implemented as tinyxml2 XMLDocument object
-	 **/
-	TiXmlDocument database;
 };
