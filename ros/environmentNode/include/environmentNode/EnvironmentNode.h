@@ -30,11 +30,21 @@
 
 #pragma once
 
-#include <string>
+#include "ros/ros.h"
 
 class EnvironmentNode {
 public:
-	EnvironmentNode(const char *filename);
-	void numberOfResources(const std::string &name);
+	EnvironmentNode(int eq);
+	bool updateResource(environmentNode::ResourceUpdate &update);
 private:
+	/**
+	 * @var equipletId
+	 * The id of the equiplet this Environment node belongs to
+	 **/
+	int equipletId;
+
+	/**
+	 * Subscriber that subsribes to the resource update topic
+	 **/
+	ros::Subscriber resourceUpdateSubscriber;
 };

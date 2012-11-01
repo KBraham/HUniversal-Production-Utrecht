@@ -32,6 +32,7 @@
 #include <environmentNode/EnvironmentNode.h>
 #include <iostream>
 #include "mongo/client/dbclient.h"
+#include <Utilities/Utilities.h>
 
 void run() {
 	mongo::DBClientConnection c;
@@ -40,6 +41,13 @@ void run() {
 
 int main(int argc, char **argv) {
 	ros::init(argc, argv, "EnvironmentNode");
+
+	int equipletId = 1;
+	if(argc != 2 || Utilities::str2int(equipletId, argv[1]) != 0) {
+		std::cerr << "Cannot read equiplet id from commandline. Assuming equiplet id is 1" <<std::endl;
+	}
+
+	EnvironmentNode environmentNode(equipletId);
 
 	try {
 	  run();

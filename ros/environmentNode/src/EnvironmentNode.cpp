@@ -29,9 +29,24 @@
  **/
 
 #include <environmentNode/EnvironmentNode.h>
-#include <iostream>
+#include <sstream>
 
-EnvironmentNode::EnvironmentNode(const char *filename){}
+/**
+ * The constructor of the equipletNode
+ * @param eq The id of the Equiplet this EnvironmentNode belongs to. If not provided, assumes equiplet id is 0
+ **/
+EnvironmentNode::EnvironmentNode(int eq): equipletId(eq) {
+	// Create the topic name that receives resouce updates. It exists of the string resourceUpdate and the equipletId attached to it
+	ostringstream os(ostringstream::out);
+	os << "resourceUpdate" << equipletId;
+	// Initialize resource update subscriber
+	ros::NodeHandle nh;
+	resourceUpdateSubscriber = nh.subscribe<environmentNode::ResourceUpdate>(os.str().c_str(), 1000, &EnvironmentNode::updateResource, &this);
+}
 
-void EnvironmentNode::numberOfResources(const std::string &name) {
+/**
+ * Update a resource in the available resources database
+ **/
+EnvironmentNode::updateResource(environmentNode::ResourceUpdate &update) {
+
 }
