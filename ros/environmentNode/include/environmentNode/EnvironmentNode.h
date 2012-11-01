@@ -31,11 +31,14 @@
 #pragma once
 
 #include "ros/ros.h"
+#include "environmentNode/ResourceUpdate.h"
+
 
 class EnvironmentNode {
 public:
 	EnvironmentNode(int eq);
-	bool updateResource(environmentNode::ResourceUpdate &update);
+	void updateResource(const environmentNode::ResourceUpdatePtr &msg);
+	
 private:
 	/**
 	 * @var equipletId
@@ -44,7 +47,7 @@ private:
 	int equipletId;
 
 	/**
-	 * Subscriber that subsribes to the resource update topic
+	 * Subscriber that subsribes to the item update topic
 	 **/
 	ros::Subscriber resourceUpdateSubscriber;
 };

@@ -28,5 +28,6 @@ sync.sh
 *.sublime-workspace
 *~
 
-
+# Ignore scons files
+.scons*
 

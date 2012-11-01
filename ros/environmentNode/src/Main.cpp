@@ -42,19 +42,19 @@ void run() {
 int main(int argc, char **argv) {
 	ros::init(argc, argv, "EnvironmentNode");
 
-	int equipletId = 1;
-	if(argc != 2 || Utilities::str2int(equipletId, argv[1]) != 0) {
-		std::cerr << "Cannot read equiplet id from commandline. Assuming equiplet id is 1" <<std::endl;
-	}
+	//int equipletId = 1;
+	//if(argc != 2 || Utilities::str2int(equipletId, argv[1]) != 0) {
+	//	std::cerr << "Cannot read equiplet id from commandline. Assuming equiplet id is 1" <<std::endl;
+	//}
 
-	EnvironmentNode environmentNode(equipletId);
+	EnvironmentNode environmentNode(1);
 
-	try {
+	/*try {
 	  run();
 	  std::cout << "connected ok" << std::endl;
 	} catch( const mongo::DBException &e ) {
 	  std::cout << "caught " << e.what() << std::endl;
-	}
+	}*/
 
 	ros::spin();
 	return 0;

@@ -30,6 +30,16 @@
 
 #include <environmentNode/EnvironmentNode.h>
 #include <sstream>
+#include "environmentNode/GetResources.h"
+
+/**
+ * The service that gets specified resources from the available resources database
+ * @param req The request object
+ * @param res The response object
+ **/
+bool getResources(environmentNode::GetResources::Request &req, environmentNode::GetResources::Response &res) {
+	return true;
+}
 
 /**
  * The constructor of the equipletNode
@@ -37,16 +47,16 @@
  **/
 EnvironmentNode::EnvironmentNode(int eq): equipletId(eq) {
 	// Create the topic name that receives resouce updates. It exists of the string resourceUpdate and the equipletId attached to it
-	ostringstream os(ostringstream::out);
-	os << "resourceUpdate" << equipletId;
+	//std::ostringstream os(std::ostringstream::out);
+	//os << "itemUpdate" << equipletId;
 	// Initialize resource update subscriber
 	ros::NodeHandle nh;
-	resourceUpdateSubscriber = nh.subscribe<environmentNode::ResourceUpdate>(os.str().c_str(), 1000, &EnvironmentNode::updateResource, &this);
+	resourceUpdateSubscriber = nh.subscribe("hoi", 1000, &EnvironmentNode::updateResource, this);
 }
 
 /**
- * Update a resource in the available resources database
+ * Update an item in the available resources database
  **/
-EnvironmentNode::updateResource(environmentNode::ResourceUpdate &update) {
-
+void EnvironmentNode::updateResource(const environmentNode::ResourceUpdatePtr &msg) {
 }
+
