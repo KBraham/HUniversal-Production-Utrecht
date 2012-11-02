@@ -30,4 +30,4 @@ sync.sh
 
 # Ignore scons files
 .scons*
-
+.sconf*
