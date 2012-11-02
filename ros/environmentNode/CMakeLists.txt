@@ -20,10 +20,10 @@ file(GLOB sources src/*.cpp)
 rosbuild_add_executable(EnvironmentNode ${sources})
 
 # Add dependencies to our libraries and other ROS packages in the same directory as this one.
-add_dependencies(EnvironmentNode mongo-cxx-driver utilities)
+add_dependencies(EnvironmentNode mongo-cxx-driver mongoCppDatabaseHelper utilities)
 
 # Include our libraries, they are all exported in Libraries/LibrariesExport.cmake
-include_directories(${MONGO_CXX_DRIVER} ${LIB_UTILITIES_INCLUDE} ${Boost_INCLUDE_DIRS})
+include_directories(${LIB_UTILITIES_INCLUDE} ${Boost_INCLUDE_DIRS} ${MONGO_CXX_DRIVER})
 
 target_link_libraries(EnvironmentNode mongoclient boost_thread-mt boost_filesystem boost_program_options boost_system)
 

@@ -31,13 +31,12 @@
 #include "ros/ros.h"
 #include <environmentNode/EnvironmentNode.h>
 #include <iostream>
-#include "mongo/client/dbclient.h"
 #include <Utilities/Utilities.h>
 
-void run() {
-	mongo::DBClientConnection c;
+
+/*mongo::DBClientConnection c;
 	c.connect("localhost");
-}
+}*/
 
 int main(int argc, char **argv) {
 	ros::init(argc, argv, "EnvironmentNode");
@@ -48,6 +47,8 @@ int main(int argc, char **argv) {
 	//}
 
 	EnvironmentNode environmentNode(1);
+
+	//MongoDatabaseHelper helper("localhost", "mydb.bla");
 
 	/*try {
 	  run();

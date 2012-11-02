@@ -28,9 +28,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#include <environmentNode/EnvironmentNode.h>
 #include <sstream>
 #include "environmentNode/GetWorkspaceItems.h"
+#include <environmentNode/EnvironmentNode.h>
 
 /**
  * The service that gets specified resources from the available resources database
@@ -56,13 +56,23 @@ EnvironmentNode::EnvironmentNode(int eq): equipletId(eq) {
 	workspaceUpdateSubscriber = nh.subscribe("hoi", 1000, &EnvironmentNode::updateWorkspaceItem, this);
 
 	// Connect to the workspace database
-	
+	try{
+		clientConnection.connect("localhost");
+		std::cout << "Connected to database" << std::endl;
+	} catch( const mongo::DBException &e ) {
+		std::cout << "caught " << e.what() << std::endl;
+	}
 }
 
 /**
  * Update an item in the available resources database
  **/
 void EnvironmentNode::updateWorkspaceItem(const environmentNode::WorkspaceItemUpdatePtr &msg) {
-
+	std::ostringstream os(std::ostringstream::out);
+	os << msg->resourceId;
+	clientConnection.update("REXOS.Workspace", QUERY("items.resource_id" << os.str().c_str()), BSON("$inc" << BSON("properties" << msg->property)), false, true);
+	//clientConnection.insert("workspace", BSON("resource_id" << "1"));
+	std::cout << clientConnection.getLastError() << std::endl;
+	std::cout << "updateWorkspaceItem called" << std::endl;
 }
 

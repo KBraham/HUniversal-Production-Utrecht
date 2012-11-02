@@ -33,7 +33,7 @@
 #include <string>
 #include "ros/ros.h"
 #include "environmentNode/WorkspaceItemUpdate.h"
-
+#include "mongo/client/dbclient.h"
 
 class EnvironmentNode {
 public:
@@ -63,4 +63,10 @@ private:
 	 * The service that returns the Items in the workspace specified
 	 **/
 	ros::ServiceServer getWorkspaceItemsService;
+
+	/**
+	 * @var databaseHelper
+	 * The database helper that is used to access the workspace database
+	 **/
+	mongo::DBClientConnection clientConnection;
 };
