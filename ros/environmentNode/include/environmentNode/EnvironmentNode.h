@@ -30,14 +30,15 @@
 
 #pragma once
 
+#include <string>
 #include "ros/ros.h"
-#include "environmentNode/ResourceUpdate.h"
+#include "environmentNode/WorkspaceItemUpdate.h"
 
 
 class EnvironmentNode {
 public:
 	EnvironmentNode(int eq);
-	void updateResource(const environmentNode::ResourceUpdatePtr &msg);
+	void updateWorkspaceItem(const environmentNode::WorkspaceItemUpdatePtr &msg);
 	
 private:
 	/**
@@ -47,7 +48,19 @@ private:
 	int equipletId;
 
 	/**
+	 * @var workspaceDatabaseHost
+	 **/
+	std::string workspaceDatabaseHost;
+
+	/**
+	 * @var workspaceUpdateSubscriber
 	 * Subscriber that subsribes to the item update topic
 	 **/
-	ros::Subscriber resourceUpdateSubscriber;
+	ros::Subscriber workspaceUpdateSubscriber;
+
+	/**
+	 * @var getWorkspaceItemsService
+	 * The service that returns the Items in the workspace specified
+	 **/
+	ros::ServiceServer getWorkspaceItemsService;
 };

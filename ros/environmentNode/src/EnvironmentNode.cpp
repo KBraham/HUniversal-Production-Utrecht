@@ -30,14 +30,14 @@
 
 #include <environmentNode/EnvironmentNode.h>
 #include <sstream>
-#include "environmentNode/GetResources.h"
+#include "environmentNode/GetWorkspaceItems.h"
 
 /**
  * The service that gets specified resources from the available resources database
  * @param req The request object
  * @param res The response object
  **/
-bool getResources(environmentNode::GetResources::Request &req, environmentNode::GetResources::Response &res) {
+bool getWorkspaceItems(environmentNode::GetWorkspaceItems::Request &req, environmentNode::GetWorkspaceItems::Response &res) {
 	return true;
 }
 
@@ -47,16 +47,22 @@ bool getResources(environmentNode::GetResources::Request &req, environmentNode::
  **/
 EnvironmentNode::EnvironmentNode(int eq): equipletId(eq) {
 	// Create the topic name that receives resouce updates. It exists of the string resourceUpdate and the equipletId attached to it
-	//std::ostringstream os(std::ostringstream::out);
-	//os << "itemUpdate" << equipletId;
-	// Initialize resource update subscriber
+	std::ostringstream os(std::ostringstream::out);
+	os << "itemUpdate" << equipletId;
+	
+	// Initialize subscribers, publishers and services
 	ros::NodeHandle nh;
-	resourceUpdateSubscriber = nh.subscribe("hoi", 1000, &EnvironmentNode::updateResource, this);
+	getWorkspaceItemsService = nh.advertiseService("getWorkspaceItems", getWorkspaceItems);
+	workspaceUpdateSubscriber = nh.subscribe("hoi", 1000, &EnvironmentNode::updateWorkspaceItem, this);
+
+	// Connect to the workspace database
+	
 }
 
 /**
  * Update an item in the available resources database
  **/
-void EnvironmentNode::updateResource(const environmentNode::ResourceUpdatePtr &msg) {
+void EnvironmentNode::updateWorkspaceItem(const environmentNode::WorkspaceItemUpdatePtr &msg) {
+
 }
 
