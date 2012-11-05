@@ -40,13 +40,15 @@
 #include "deltaRobotNode/Calibrate.h"
 #include "DeltaRobotNode/Services.h"
 
+using namespace std;
+
 namespace PickAndPlaceNamespace {
 	class PickAndPlace : IService {
 	public:
 		PickAndPlace();
 		void pick(int x, int y, int z);
 		void place(int x, int y, int z);
-		void PickAndPlace::run(String command);
+		void run(string command, map<char, int> coordinates, int workspaceid, int parentid, int resourceid);
 		
 	private:
 		

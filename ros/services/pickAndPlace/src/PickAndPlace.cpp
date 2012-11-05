@@ -42,19 +42,22 @@ namespace PickAndPlaceNamespace {
 	}
 
 	void PickAndPlace::pick(int x, int y, int z) {
-
+		
 	}
 
 	void PickAndPlace::place(int x, int y, int z) {
 
 	}
 
-	void PickAndPlace::run(string[5] action) {
-		string command = action[0];
-		//int x = stringToInt(action[1]);
-		//int y = stringToInt(action[2]);
-		//int z = stringToInt(action[3]);
-		string relativeTo = action[4];
+	void PickAndPlace::run(string command, map<char, int> coordinates, int workspaceid, int parentid, int resourceid) {
+		//int x = stringToInt(coordinates[0].second);
+		//int y = stringToInt(coordinates[1].second);
+		//int z = stringToInt(coordinates[2].second);
+		
+		// Get item from environment database. Example query:
+		//  SELECT * FROM Items  WHERE workspaceID = workspaceid AND resourceID = resourceid AND (SELECT id FROM Items) = parentid;
+		
+
 	}
 }
 
@@ -68,9 +71,14 @@ int main(int argc, char **argv) {
 	deltaRobotNode::Calibrate calibrateService;
 	calibrateClient.call(calibrateService);
 
-	PickAndPlaceNamespace::PickAndPlace pap;
+	PickAndPlaceNamespace::PickAndPlace pickandplace;
 
-	pap.pick(1, 2, 3);
+	map<char, int> m;
+	m.insert(pair<char, int>('x', 1));
+	m.insert(pair<char, int>('y', 2));
+	m.insert(pair<char, int>('z', 3));
+
+	pickandplace.run("moveTo", m, 1, 1, 2);
 
 	return 0;
 }
