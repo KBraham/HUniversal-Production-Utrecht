@@ -32,7 +32,6 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
-
 #pragma once
 
 #include "ros/ros.h"
@@ -53,15 +52,15 @@
 #include <crateLocatorNode/getAllCrates.h>
 #include <crateLocatorNode/CrateEventMsg.h>
 
-class CrateLocatorNode{
+class CrateLocatorNode {
 public:
 
-	CrateLocatorNode();
-	~CrateLocatorNode();
+	CrateLocatorNode( );
+	~CrateLocatorNode( );
 
-	void run();
-	bool getCrate(crateLocatorNode::getCrate::Request &req,crateLocatorNode::getCrate::Response &res);
-	bool getAllCrates(crateLocatorNode::getAllCrates::Request &req,crateLocatorNode::getAllCrates::Response &res);
+	void run( );
+	bool getCrate(crateLocatorNode::getCrate::Request &req, crateLocatorNode::getCrate::Response &res);
+	bool getAllCrates(crateLocatorNode::getAllCrates::Request &req, crateLocatorNode::getAllCrates::Response &res);
 
 private:
 	/**
@@ -174,4 +173,5 @@ private:
 	bool calibrate(unsigned int measurements = 100, unsigned int maxErrors = 100);
 	void calibrateCallback(const sensor_msgs::ImageConstPtr& msg);
 	void crateLocateCallback(const sensor_msgs::ImageConstPtr& msg);
+	void testCallback(const sensor_msgs::ImageConstPtr& msg);
 };

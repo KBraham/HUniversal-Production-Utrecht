@@ -40,6 +40,10 @@
 #include <CrateLocatorNode/Topics.h>
 #include <DataTypes/Crate.h>
 
+	int thresh = 100;
+	int max_thresh = 255;
+	int thresh2 = thresh * 2;
+
 /**
  * @var WINDOW_NAME
  * Name for the opencv image window.
@@ -111,6 +115,9 @@ CrateLocatorNode::CrateLocatorNode( ) :
 
 	// Opencv GUI
 	cv::namedWindow(WINDOW_NAME);
+	cv::createTrackbar( " Canny thresh:", WINDOW_NAME, &thresh, max_thresh );
+	cv::createTrackbar( " Canny thresh2:", WINDOW_NAME, &thresh2, max_thresh*2 );
+
 	cvSetMouseCallback(WINDOW_NAME, &on_mouse, cordTransformer);
 }
 
@@ -370,6 +377,79 @@ void CrateLocatorNode::crateLocateCallback(const sensor_msgs::ImageConstPtr& msg
 	cv::waitKey(3);
 }
 
+
+/**
+ * test function for image to line drawing
+ **/
+void CrateLocatorNode::testCallback(const sensor_msgs::ImageConstPtr& msg) {
+	// Receive image
+	cv_bridge::CvImagePtr cv_ptr;
+	try {
+		cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+	} catch (cv_bridge::Exception& e) {
+		ROS_ERROR("cv_bridge exception: %s", e.what());
+		return;
+	}
+
+
+	cv_ptr->image = cv::imread("/home/kbraham/Downloads/derp/hoofd2.jpg");
+	if(cv_ptr->image.data == NULL){
+		std::cerr << "ERRORRRRRR!!!!";
+		return;
+	}
+
+/*
+	cv::Mat src_gray;
+
+	cv::cvtColor( cv_ptr->image, src_gray, CV_BGR2GRAY );
+
+	cv::Mat canny_output;
+	  std::vector<std::vector<cv::Point> > contours;
+	  std::vector<Vec4i> hierarchy;
+
+	  /// Detect edges using canny
+	  Canny( src_gray, canny_output, thresh, thresh*2, 3 );
+	  /// Find contours
+	  findContours( canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+	  /// Draw contours
+	  Mat drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
+	  for( int i = 0; i< contours.size(); i++ )
+	     {
+	       Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+	       drawContours( drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
+	     }
+
+	  /// Show in a window
+	  namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
+	  imshow( "Contours", drawing );
+
+*/
+	cv::Mat debug;
+	cv_ptr->image.copyTo(debug);
+	debug = cv_ptr->image >= 0;
+
+	// First copy the image to a gray scale image.
+	cv::Mat gray;
+	cv::cvtColor(cv_ptr->image, gray, CV_BGR2GRAY);
+	//cv_ptr->image = gray > 128;
+
+	cv::Mat canny_output;
+
+		  /// Detect edges using canny
+		  Canny( cv_ptr->image, canny_output, thresh, thresh2, 3 );
+		  /// Find contours
+
+	std::vector<std::vector<cv::Point> > contours;
+	cv::findContours(canny_output, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+	cv::drawContours(debug, contours, -1, cv::Scalar(0, 0, 255));
+
+	// Show the camera frame in a opencv window
+	cv::imshow(WINDOW_NAME, debug);
+	cv::waitKey(3);
+
+}
+
 /**
  * Blocking function that contains the main loop.
  * Spins in ROS to receive frames. These will execute the callbacks.
@@ -377,22 +457,22 @@ void CrateLocatorNode::crateLocateCallback(const sensor_msgs::ImageConstPtr& msg
  **/
 void CrateLocatorNode::run( ) {
 	//run initial calibration. If that fails, this node will shut down.
-	if (!calibrate()) {
-		ros::shutdown();
-	} else {
+	//if (!calibrate()) {
+	//	ros::shutdown();
+	//} else {
 		// Shutdown is not immediately exiting the program. This caused to run the these statements if they were not in the else...
 
 		std::cout << "[DEBUG] Waiting for subscription" << std::endl;
 		// subscribe example: (poorly documented on ros wiki)
 		// Images are transported in JPEG format to decrease tranfer time per image.
 		// imageTransport.subscribe(<base image topic>, <queue_size>, <callback>, <tracked object>, <TransportHints(<transport type>)>)
-		cameraSubscriber = imageTransport.subscribe("camera/image", 1, &CrateLocatorNode::crateLocateCallback, this, image_transport::TransportHints("compressed"));
-		std::cout << "[DEBUG] Starting crateLocateCallback loop" << std::endl;
+		cameraSubscriber = imageTransport.subscribe("camera/image", 1, &CrateLocatorNode::testCallback, this, image_transport::TransportHints("compressed"));
+		std::cout << "[DEBUG] Starting testCallback loop" << std::endl;
 
 		while (ros::ok()) {
 			ros::spinOnce();
 		}
-	}
+
 }
 
 /**

@@ -101,7 +101,7 @@ namespace Vision {
 	 *  @param image Image with the fiducials
 	 *  @param points Output vector that will contain the center points
 	 *  @param debugImage Output image where debug information will be drawn on, set to NULL for no debug information
-	 */
+	 **/
 	void FiducialDetector::detect(cv::Mat& image, std::vector<cv::Point2f>& points, cv::Mat* debugImage) {
 		// Apply gaussian blur
 		cv::Mat blur;
