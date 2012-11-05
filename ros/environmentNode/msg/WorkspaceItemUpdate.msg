@@ -1,3 +1,3 @@
 int64 resourceId
-string property
+KeyValue[] properties
 string items

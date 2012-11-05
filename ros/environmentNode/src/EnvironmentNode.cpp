@@ -31,6 +31,7 @@
 #include <sstream>
 #include "environmentNode/GetWorkspaceItems.h"
 #include <environmentNode/EnvironmentNode.h>
+#include <environmentNode/KeyValue.h>
 
 /**
  * The service that gets specified resources from the available resources database
@@ -69,10 +70,23 @@ EnvironmentNode::EnvironmentNode(int eq): equipletId(eq) {
  **/
 void EnvironmentNode::updateWorkspaceItem(const environmentNode::WorkspaceItemUpdatePtr &msg) {
 	std::ostringstream os(std::ostringstream::out);
-	os << msg->resourceId;
-	clientConnection.update("REXOS.Workspace", QUERY("items.resource_id" << os.str().c_str()), BSON("$inc" << BSON("properties" << msg->property)), false, true);
+	std::vector<environmentNode::KeyValue> properties(msg->properties);
+	os << "{";
+	for(int i = 0; i < properties.size(); i++)
+	{
+		os << "'" << properties[i].key << "'" << ":" << properties[i].value << std::endl;
+		if(i < (properties.size() - 1))
+	}
+
+
+	clientConnection.update("REXOS.Workspace", QUERY("equipletid" << 1), BSON("$set:" << "{'items.properties.x':3}"), false, true);
 	//clientConnection.insert("workspace", BSON("resource_id" << "1"));
-	std::cout << clientConnection.getLastError() << std::endl;
+	//std::cout << clientConnectionuse .getLastError() << std::endl;
+	//clientConnection.remove("REXOS.Workspace", QUERY("equipletid"<<1));
+	std::string err = clientConnection.getLastError();
+	bool ok = err.empty();
+	std::cout << "OK?: " << ok << std::endl;
 	std::cout << "updateWorkspaceItem called" << std::endl;
 }
+
 
