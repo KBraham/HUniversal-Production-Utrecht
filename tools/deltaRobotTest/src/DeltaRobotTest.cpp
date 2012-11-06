@@ -118,18 +118,27 @@ int main(int argc, char **argv){
 	//std:: cin >> keyPress;    
 	calibrateClient.call(calibrateService);
 
-	int i = 0;
+	// Test MoveToPoint Service.
+	std:: cout << "Press any key to move 25 mm down" << std::endl;
+	std:: cin >> keyPress;
+	moveToRelativePointService.request.motion.x = 0;
+	moveToRelativePointService.request.motion.y = 0;
+	moveToRelativePointService.request.motion.z = -25;
+	moveToRelativePointService.request.motion.speed = speed;
+	moveToRelativePointClient.call(moveToRelativePointService);
+
+	int i = 25;
 
 	for(; keyPress != 'q';) {
 		// Test MoveToPoint Service.
-		std:: cout << "Now on: " << i << "; Press any key to move another mm down" << std::endl;
+		std:: cout << "Now on: " << -i << "; Press any key to move another mm down" << std::endl;
 		std:: cin >> keyPress;
 		moveToRelativePointService.request.motion.x = 0;
 		moveToRelativePointService.request.motion.y = 0;
-		moveToRelativePointService.request.motion.z = i;
+		moveToRelativePointService.request.motion.z = -i;
 		moveToRelativePointService.request.motion.speed = speed;
 		moveToRelativePointClient.call(moveToRelativePointService);
-		i--;
+		i++;
 	}
 
 	// Test MoveToPoint Service.
