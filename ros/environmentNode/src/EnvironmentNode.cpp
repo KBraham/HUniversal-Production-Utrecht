@@ -29,7 +29,6 @@
  **/
 
 #include <sstream>
-#include "environmentNode/GetWorkspaceItems.h"
 #include <environmentNode/EnvironmentNode.h>
 #include <environmentNode/KeyValue.h>
 
@@ -38,9 +37,36 @@
  * @param req The request object
  * @param res The response object
  **/
-bool getWorkspaceItems(environmentNode::GetWorkspaceItems::Request &req, environmentNode::GetWorkspaceItems::Response &res) {
+bool EnvironmentNode::getWorkspaceItems(environmentNode::GetWorkspaceItems::Request &req, environmentNode::GetWorkspaceItems::Response &res) {
 	return true;
 }
+
+/**
+ * Update an item in the available resources database
+ **/
+bool EnvironmentNode::updateWorkspaceItem(environmentNode::UpdateWorkspaceItem::Request &req, environmentNode::UpdateWorkspaceItem::Response &res) {
+	std::ostringstream os(std::ostringstream::out);
+	std::vector<environmentNode::KeyValue> properties(req.item.properties);
+	/* Create the JSON string */
+	os << "{";
+	for(int i = 0; i < properties.size(); i++)
+	{
+		os << "'" << properties[i].key << "'" << ":" << properties[i].value;
+		if(i < (properties.size() - 1)){
+			os << ",";
+		}
+	}
+	os << "}";
+	/* Create a bson object from the json string */
+	mongo::BSONObj p = mongo::fromjson(os.str().c_str());
+	/* Update the database */
+	EnvironmentNode::clientConnection.update("REXOSV2.Item", QUERY("resource_type" << 2), BSON("$set" << p), false, true);
+	std::string error = clientConnection.getLastError();
+	res.success = error.empty();
+	return res.success;
+}
+
+
 
 /**
  * The constructor of the equipletNode
@@ -53,8 +79,8 @@ EnvironmentNode::EnvironmentNode(int eq): equipletId(eq) {
 	
 	// Initialize subscribers, publishers and services
 	ros::NodeHandle nh;
-	getWorkspaceItemsService = nh.advertiseService("getWorkspaceItems", getWorkspaceItems);
-	workspaceUpdateSubscriber = nh.subscribe("hoi", 1000, &EnvironmentNode::updateWorkspaceItem, this);
+	getWorkspaceItemsService = nh.advertiseService("getWorkspaceItems", &EnvironmentNode::getWorkspaceItems, this);
+	updateWorkspaceItemService = nh.advertiseService("updateWorkspaceItem", &EnvironmentNode::updateWorkspaceItem, this);
 
 	// Connect to the workspace database
 	try{
@@ -65,28 +91,6 @@ EnvironmentNode::EnvironmentNode(int eq): equipletId(eq) {
 	}
 }
 
-/**
- * Update an item in the available resources database
- **/
-void EnvironmentNode::updateWorkspaceItem(const environmentNode::WorkspaceItemUpdatePtr &msg) {
-	std::ostringstream os(std::ostringstream::out);
-	std::vector<environmentNode::KeyValue> properties(msg->properties);
-	os << "{";
-	for(int i = 0; i < properties.size(); i++)
-	{
-		os << "'" << properties[i].key << "'" << ":" << properties[i].value << std::endl;
-		if(i < (properties.size() - 1))
-	}
 
-
-	clientConnection.update("REXOS.Workspace", QUERY("equipletid" << 1), BSON("$set:" << "{'items.properties.x':3}"), false, true);
-	//clientConnection.insert("workspace", BSON("resource_id" << "1"));
-	//std::cout << clientConnectionuse .getLastError() << std::endl;
-	//clientConnection.remove("REXOS.Workspace", QUERY("equipletid"<<1));
-	std::string err = clientConnection.getLastError();
-	bool ok = err.empty();
-	std::cout << "OK?: " << ok << std::endl;
-	std::cout << "updateWorkspaceItem called" << std::endl;
-}
 
 

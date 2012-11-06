@@ -34,12 +34,14 @@
 #include "ros/ros.h"
 #include "environmentNode/WorkspaceItemUpdate.h"
 #include "mongo/client/dbclient.h"
+#include <environmentNode/UpdateWorkspaceItem.h>
+#include <environmentNode/GetWorkspaceItems.h>
 
 class EnvironmentNode {
 public:
 	EnvironmentNode(int eq);
-	void updateWorkspaceItem(const environmentNode::WorkspaceItemUpdatePtr &msg);
-	
+	bool getWorkspaceItems(environmentNode::GetWorkspaceItems::Request &req, environmentNode::GetWorkspaceItems::Response &res);
+	bool updateWorkspaceItem(environmentNode::UpdateWorkspaceItem::Request &req, environmentNode::UpdateWorkspaceItem::Response &res);
 private:
 	/**
 	 * @var equipletId
@@ -63,6 +65,12 @@ private:
 	 * The service that returns the Items in the workspace specified
 	 **/
 	ros::ServiceServer getWorkspaceItemsService;
+
+	/**
+	 * @var updateWorkspaceItemService
+	 * The service that returns the Items in the workspace specified
+	 **/
+	ros::ServiceServer updateWorkspaceItemService;
 
 	/**
 	 * @var databaseHelper
