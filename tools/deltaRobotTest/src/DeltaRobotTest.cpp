@@ -123,7 +123,7 @@ int main(int argc, char **argv){
 	std:: cin >> keyPress;   
 	moveToPointService.request.motion.x = 0;
 	moveToPointService.request.motion.y = 0;
-	moveToPointService.request.motion.z = -300;	
+	moveToPointService.request.motion.z = -100;
 	moveToPointService.request.motion.speed = speed;
 	moveToPointClient.call(moveToPointService);
 
