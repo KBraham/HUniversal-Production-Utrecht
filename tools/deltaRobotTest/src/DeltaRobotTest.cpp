@@ -120,13 +120,13 @@ int main(int argc, char **argv){
 
 	int i = 0;
 
-	for(; keyPress != 's';) {
+	for(; keyPress != 'q';) {
 		// Test MoveToPoint Service.
 		std:: cout << "Now on: " << i << "; Press any key to move another mm down" << std::endl;
 		std:: cin >> keyPress;
 		moveToRelativePointService.request.motion.x = 0;
 		moveToRelativePointService.request.motion.y = 0;
-		moveToRelativePointService.request.motion.z = -1;
+		moveToRelativePointService.request.motion.z = i;
 		moveToRelativePointService.request.motion.speed = speed;
 		moveToRelativePointClient.call(moveToRelativePointService);
 		i--;
