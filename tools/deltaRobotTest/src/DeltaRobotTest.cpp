@@ -45,9 +45,9 @@
 namespace DeltaRobotTestNamespace {
 	/**
 	 * @var const double speed
-	 * The speed in milimeters the deltarobot moves per second.
+	 * The speed in millimeters the deltarobot moves per second.
 	 **/
-	const double speed = 100.0;
+	const double speed = 10.0;
 
 	/**
 	 * @var char keyPress
@@ -117,9 +117,18 @@ int main(int argc, char **argv){
 	std:: cout << "Press any key to start the Calibrate" << std::endl;
 	std:: cin >> keyPress;    
 	calibrateClient.call(calibrateService);
+	
+	// Go to Crate.
+	std:: cout << "Press any key to move to the crate position" << std::endl;
+	std:: cin >> keyPress;
+	moveToPointService.request.motion.x = 0;
+	moveToPointService.request.motion.y = 0;
+	moveToPointService.request.motion.z = -300;	
+	moveToPointService.request.motion.speed = speed;
+	moveToPointClient.call(moveToPointService);
 
 	// Test MoveToPoint Service.
-	std:: cout << "Press any key to start the MoveToPoint" << std::endl;
+	/*std:: cout << "Press any key to start the MoveToPoint" << std::endl;
 	std:: cin >> keyPress;   
 	moveToPointService.request.motion.x = 10;
 	moveToPointService.request.motion.y = 10;
@@ -214,6 +223,6 @@ int main(int argc, char **argv){
 		moveRelativePathService.request.motion.push_back(point4);
 		moveRelativePathService.request.motion.push_back(point5);
 	}
-	moveRelativePathClient.call(moveRelativePathService);
+	moveRelativePathClient.call(moveRelativePathService);*/
 	return 0;
 }

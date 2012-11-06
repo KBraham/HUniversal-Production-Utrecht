@@ -41,23 +41,31 @@ namespace PickAndPlaceNamespace {
 		
 	}
 
-	void PickAndPlace::pick(int x, int y, int z) {
+	void PickAndPlace::pick() {
 		
 	}
 
-	void PickAndPlace::place(int x, int y, int z) {
+	void PickAndPlace::place() {
 
 	}
 
-	void PickAndPlace::run(string command, map<char, int> coordinates, int workspaceid, int parentid, int resourceid) {
-		//int x = stringToInt(coordinates[0].second);
-		//int y = stringToInt(coordinates[1].second);
-		//int z = stringToInt(coordinates[2].second);
-		
+	void PickAndPlace::moveToPoint(string command, pair<char, int> coordinates[], int workspaceid, int parentid, int resourceid) {
+		ros::NodeHandle nodeHandle;
+
+		const double speed = 100.0;
+
+		// Getting MoveToRelativePoint Services.
+		ros::ServiceClient moveToRelativePointClient = nodeHandle.serviceClient<deltaRobotNode::MoveToRelativePoint>(DeltaRobotNodeServices::MOVE_TO_RELATIVE_POINT);
+		deltaRobotNode::MoveToRelativePoint moveToRelativePointService;
+
+		moveToRelativePointService.request.motion.x = coordinates[0].second;
+		moveToRelativePointService.request.motion.y = coordinates[1].second;
+		moveToRelativePointService.request.motion.z = coordinates[2].second;
+		moveToRelativePointService.request.motion.speed = speed;
+		moveToRelativePointClient.call(moveToRelativePointService);
+
 		// Get item from environment database. Example query:
 		//  SELECT * FROM Items  WHERE workspaceID = workspaceid AND resourceID = resourceid AND (SELECT id FROM Items) = parentid;
-		
-
 	}
 }
 
@@ -73,12 +81,13 @@ int main(int argc, char **argv) {
 
 	PickAndPlaceNamespace::PickAndPlace pickandplace;
 
-	map<char, int> m;
-	m.insert(pair<char, int>('x', 1));
-	m.insert(pair<char, int>('y', 2));
-	m.insert(pair<char, int>('z', 3));
+	pair<char, int> m[3] = {
+		pair<char, int>('x', 1), 
+		pair<char, int>('y', 2), 
+		pair<char, int>('z', 3)
+	};
 
-	pickandplace.run("moveTo", m, 1, 1, 2);
+	pickandplace.moveToPoint("moveTo", m, 1, 1, 2);
 
 	return 0;
 }
