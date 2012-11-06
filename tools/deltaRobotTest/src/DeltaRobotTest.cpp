@@ -121,12 +121,12 @@ int main(int argc, char **argv){
 	// Test MoveToPoint Service.
 	std:: cout << "Press any key to move to the crate" << std::endl;
 	std:: cin >> keyPress;   
-	moveToPointService.request.motion.x = 0;
-	moveToPointService.request.motion.y = 0;
-	moveToPointService.request.motion.z = -25;
-	//moveToPointService.request.motion.z = -85;
-	moveToPointService.request.motion.speed = speed;
-	moveToPointClient.call(moveToPointService);
+	moveToRelativePointService.request.motion.x = 0;
+	moveToRelativePointService.request.motion.y = 0;
+	moveToRelativePointService.request.motion.z = -25;
+	//moveToRelativePointService.request.motion.z = -85;
+	moveToRelativePointService.request.motion.speed = speed;
+	moveToRelativePointClient.call(moveToRelativePointService);
 
 	// Test MoveToPoint Service.
 	/*std:: cout << "Press any key to start the MoveToPoint" << std::endl;
