@@ -36,6 +36,7 @@ ImageTransformationNode::ImageTransformationNode(int equipletID, int moduleID): 
 	cv::createTrackbar( "blockSize:", WINDOW_NAME, &blockSize, maximum );
 	cv::createTrackbar( "subtract :", WINDOW_NAME, &subtract, maximum );
 
+	// TODO service for the dotmatrix
 	cvSetMouseCallback(WINDOW_NAME, &on_mouse, outputImage);
 }
 
