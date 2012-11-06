@@ -114,8 +114,8 @@ int main(int argc, char **argv){
 	deltaRobotNode::MoveRelativePath moveRelativePathService;
 	
 	// Test Calibrate Service.
-	std:: cout << "Press any key to start the Calibrate" << std::endl;
-	std:: cin >> keyPress;    
+	std:: cout << "Starting the Calibration" << std::endl;
+	//std:: cin >> keyPress;    
 	calibrateClient.call(calibrateService);
 
 	// Test MoveToPoint Service.
