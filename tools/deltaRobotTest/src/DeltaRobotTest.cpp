@@ -45,7 +45,7 @@
 namespace DeltaRobotTestNamespace {
 	/**
 	 * @var const double speed
-	 * The speed in milimeters the deltarobot moves per second.
+	 * The speed in millimeters the deltarobot moves per second.
 	 **/
 	const double speed = 10.0;
 

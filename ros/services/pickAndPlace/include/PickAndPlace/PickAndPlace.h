@@ -46,9 +46,9 @@ namespace PickAndPlaceNamespace {
 	class PickAndPlace : IService {
 	public:
 		PickAndPlace();
-		void pick(int x, int y, int z);
-		void place(int x, int y, int z);
-		void run(string command, map<char, int> coordinates, int workspaceid, int parentid, int resourceid);
+		void pick();
+		void place();
+		void moveToPoint(string command, pair<char, int> coordinates[], int workspaceid, int parentid, int resourceid);
 		
 	private:
 		
