@@ -20,6 +20,7 @@ msg_gen/
 ros/deltaRobotNode/src/deltaRobotNode/
 ros/rosMast/src/rosMast/
 tools/gripperTestNode/src/gripperTestNode/
+tools/imageTransformationNode/src/imageTransformationNode/
 build/
 
 # Ignore project file, cmake text file and editor temporary files
