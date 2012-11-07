@@ -119,11 +119,11 @@ int main(int argc, char **argv){
 	calibrateClient.call(calibrateService);
 
 	// Test MoveToPoint Service.
-	std:: cout << "Press any key to move 25 mm down" << std::endl;
+	std:: cout << "Press any key to move 50 mm down" << std::endl;
 	std:: cin >> keyPress;
 	moveToRelativePointService.request.motion.x = 0;
 	moveToRelativePointService.request.motion.y = 0;
-	moveToRelativePointService.request.motion.z = -25;
+	moveToRelativePointService.request.motion.z = -50;
 	moveToRelativePointService.request.motion.speed = speed;
 	moveToRelativePointClient.call(moveToRelativePointService);
 
