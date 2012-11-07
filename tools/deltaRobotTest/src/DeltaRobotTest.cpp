@@ -127,18 +127,24 @@ int main(int argc, char **argv){
 	moveToRelativePointService.request.motion.speed = speed;
 	moveToRelativePointClient.call(moveToRelativePointService);
 
-	int i = 50+196.063;
+	int zvalueFromCalibrationPoint = 50;
+	int zvalue = 50 + 196.063;
 
 	for(; keyPress != 'q';) {
 		// Test MoveToPoint Service.
-		std:: cout << "Now on: " << -i << "; Press any key to move another mm down" << std::endl;
+		std:: cout << "z-value: " << -zvalue << std::endl;
+		std:: cout << "z-value from calibration point: " << -zvalueFromCalibrationPoint << std::endl;
+		std:: cout << "Press any key to move another mm down" << std::endl;
 		std:: cin >> keyPress;
+
 		moveToRelativePointService.request.motion.x = 0;
 		moveToRelativePointService.request.motion.y = 0;
 		moveToRelativePointService.request.motion.z = -1;
 		moveToRelativePointService.request.motion.speed = speed;
 		moveToRelativePointClient.call(moveToRelativePointService);
-		i++;
+
+		zvalueFromCalibrationPoint++;
+		zvalue++;
 	}
 
 	// Test MoveToPoint Service.
