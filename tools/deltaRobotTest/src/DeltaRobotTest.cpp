@@ -135,7 +135,7 @@ int main(int argc, char **argv){
 		std:: cin >> keyPress;
 		moveToRelativePointService.request.motion.x = 0;
 		moveToRelativePointService.request.motion.y = 0;
-		moveToRelativePointService.request.motion.z = -i;
+		moveToRelativePointService.request.motion.z = -1;
 		moveToRelativePointService.request.motion.speed = speed;
 		moveToRelativePointClient.call(moveToRelativePointService);
 		i++;
