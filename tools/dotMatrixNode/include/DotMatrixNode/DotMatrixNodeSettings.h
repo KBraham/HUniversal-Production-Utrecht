@@ -19,6 +19,6 @@ namespace DotMatrixNodeSettings {
 	 * @var static const unsigned double DRAW_FIELD_DOTS_PER_MM
 	 * Number of dots per millimeter of the drawing field
 	 */
-	static const unsigned double DRAW_FIELD_DOTS_PER_MM = 2;
+	static const double DRAW_FIELD_DOTS_PER_MM = 2;
 
 }
