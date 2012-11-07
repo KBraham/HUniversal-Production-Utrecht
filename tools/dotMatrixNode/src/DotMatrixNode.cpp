@@ -6,6 +6,7 @@
  */
 
 #include "iostream"
+#include <assert.h>
 #include "ros/ros.h"
 #include <DotMatrixNode/DotMatrixNode.h>
 #include <DotMatrixNode/DotMatrixNodeSettings.h>
@@ -29,33 +30,58 @@ DotMatrixNode::~DotMatrixNode( ) {
  * TODO: offset drawing for centering the image!
  */
 void DotMatrixNode::drawDot(int x, int y) {
-	// Move to X, Y
+	// Move to X, Y, Zhigh
 
-	// Move to Zlow
+	// Move to X, Y, Zlow
 	// TODO: find the Z for drawing
 
-	// Move to Zhigh
-
-	// Done dotting?
+	// Move to X, Y, Zhigh
 }
 
 void DotMatrixNode::run( ) {
+	//TODO imageData;
+
+	//TODO assert sizewise? fix later for total size?
+	assert(image.width <= DotMatrixNodeSettings::DRAW_FIELD_WIDTH * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM);
+	assert(image.height <= DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM);
+
 	// Calculate X,Y by converting X,Y in pixels to X,Y in mm
-	double startX = DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0;
+	double deltaRobotX = -(DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0);
+	double deltaRobotY = DotMatrixNodeSettings::DRAW_FIELD_WIDTH / 2.0;
 
-	 //* Converts the coordinates to the deltarobot coordinates (x,y,z)
+	
 
-
-	for (unsigned int i = 0; i < gimp_image.height * gimp_image.width * gimp_image.bytes_per_pixel; i += gimp_image.bytes_per_pixel) {
-		if (i % 50 == 0) {
-			std::cout << std::endl;
-		}
-		if (gimp_image.pixel_data[i] == 0 && gimp_image.pixel_data[i] == gimp_image.pixel_data[i + 1] && gimp_image.pixel_data[i + 1] == gimp_image.pixel_data[i + 2]) {
-			std::cout << "#";
+	unsigned int pixelPointer = 0;
+	for(unsigned int j = 0; j < height; j++){
+		if(j % 2 == 0){
+			for (; (pixelPointer + 1) % width != 0; pixelPointer++) {
+				//TODO if(imageData[pixelPointer]){
+					drawDot(deltaRobotX, deltaRobotY);
+				//}
+				deltaRobotX += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+			}
 		} else {
-			std::cout << " ";
+			for (; pixelPointer % width != 0; pixelPointer--) {
+				//TODO if(imageData[pixelPointer]){
+					drawDot(deltaRobotX, deltaRobotY);
+				//}
+				deltaRobotX -= DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+			}
 		}
+		pixelPointer += width;
+		deltaRobotY += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
 	}
+
+	//for (unsigned int i = 0; i < gimp_image.height * gimp_image.width * gimp_image.bytes_per_pixel; i += gimp_image.bytes_per_pixel) {
+	//	if (i % 50 == 0) {
+	//		std::cout << std::endl;
+	//	}
+	//	if (gimp_image.pixel_data[i] == 0 && gimp_image.pixel_data[i] == gimp_image.pixel_data[i + 1] && gimp_image.pixel_data[i + 1] == gimp_image.pixel_data[i + 2]) {
+	//		std::cout << "#";
+	//	} else {
+	//		std::cout << " ";
+	//	}
+	//}
 }
 
 int main(int argc, char** argv) {
