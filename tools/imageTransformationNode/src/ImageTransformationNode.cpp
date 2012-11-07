@@ -1,3 +1,33 @@
+/**
+ * @file ImageTransformationNode.cpp
+ * @brief Transforms the image from the camera with a GUI and adjustable adaptive threshold. It sends out the image on a topic.
+ * @date 2012-11-06
+ *
+ * @author Daan Veltman
+ *
+ * @section LICENSE
+ * License: newBSD
+ * 
+ * Copyright © 2012, HU University of Applied Sciences Utrecht.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+ * - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+ * - Neither the name of the HU University of Applied Sciences Utrecht nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE HU UNIVERSITY OF APPLIED SCIENCES UTRECHT
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **/
+
 #include "ImageTransformationNode.h"
 
 #define NODE_NAME "ImageTransformationNode"
@@ -15,7 +45,7 @@ static const char WINDOW_NAME[] = "Image window";
  * @param x X coordinate of the click.
  * @param y Y coordinate of the click.
  * @param flags CV_EVENT_FLAG.
- * @param param Output image to publish on topic.
+ * @param param ImageTransformationNode.
  **/
 void on_mouse(int event, int x, int y, int flags, void* param) {
 	if (event == CV_EVENT_RBUTTONDOWN) {
@@ -24,7 +54,10 @@ void on_mouse(int event, int x, int y, int flags, void* param) {
 }
 
 /**
- * Constructor 
+ * Constructor.
+ *
+ * @param equipletID Equiplet identifier.
+ * @param moduleID Module identifier.
  **/
 ImageTransformationNode::ImageTransformationNode(int equipletID, int moduleID) : imageTransport(nodeHandle) {
 	blockSize = 15;
@@ -43,6 +76,9 @@ ImageTransformationNode::ImageTransformationNode(int equipletID, int moduleID) :
 	cvSetMouseCallback(WINDOW_NAME, &on_mouse, this);
 }
 
+/**
+ * Publishes the outputImage as a CvImage with the cv_bridge.
+ **/
 void ImageTransformationNode::publishImage(){
 	ros::Time time = ros::Time::now();
 	cv_bridge::CvImage cvi;
@@ -55,6 +91,8 @@ void ImageTransformationNode::publishImage(){
 
 /**
  * Transforms the image on the topic to the correct size and format and publishes to a new topic.
+ *
+ * @param msg The pointer to the message that contains the camera image.
  **/
 void ImageTransformationNode::transformCallback(const sensor_msgs::ImageConstPtr& msg) {
 	// Receive image
@@ -104,6 +142,14 @@ void ImageTransformationNode::run( ) {
 	}
 }
 
+/**
+ * Main
+ *
+ * @param argc Argument count.
+ * @param argv Node name, equipletID, moduleID.
+ *
+ * @return 0 if succesful, -1 if command line arguments are incorrect
+ **/
 int main(int argc, char** argv){
 	ros::init(argc, argv, NODE_NAME);
 	int equipletID = 0;
