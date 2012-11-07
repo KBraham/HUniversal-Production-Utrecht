@@ -28,7 +28,6 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
-
 #pragma once
 
 #include "ros/ros.h"
@@ -39,22 +38,22 @@
 #include <iostream>
 #include <sstream>
 
-class DotMatrixNode{
+class DotMatrixNode {
 public:
 
-	DotMatrixNode();
-	virtual ~DotMatrixNode();
+	DotMatrixNode( );
+	virtual ~DotMatrixNode( );
 
 	void drawDot(int x, int y);
 
-	void run();
+	void run( );
 private:
 
 	/**
 	 * @var ros::NodeHandle node
 	 * The nodeHandle used by ros services and topics
 	 **/
-	ros::NodeHandle node;
+	ros::NodeHandle nodeHandle;
 
 	/**
 	 * @var image_transport::ImageTransport imageTransport
@@ -67,4 +66,7 @@ private:
 	 * Subscription to the camera topic for receiving frames.
 	 **/
 	image_transport::Subscriber cameraSubscriber;
+
+	ros::ServiceClient deltaRobotClient;
+	deltaRobotNode::MoveToPoint moveToPointService;
 };

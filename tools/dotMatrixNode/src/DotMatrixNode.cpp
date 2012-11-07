@@ -15,8 +15,11 @@
 #define NODE_NAME "GripperNode"
 
 DotMatrixNode::DotMatrixNode( ) :
-		imageTransport(node) {
-
+		imageTransport(nodeHandle), deltaRobotClient(nodeHandle.serviceClient<deltaRobotNode::MoveToPoint>(DeltaRobotNodeServices::MOVE_TO_POINT)) {
+	moveToPointService.request.motion.x = 0;
+	moveToPointService.request.motion.y = 0;
+	moveToPointService.request.motion.z = -230;
+	moveToPointService.request.motion.speed = 300;
 }
 
 DotMatrixNode::~DotMatrixNode( ) {
@@ -28,7 +31,7 @@ DotMatrixNode::~DotMatrixNode( ) {
  * @param x X coordinate of the dotted pixel
  * @param y Y coordinate of the dotted pixel
  * TODO: offset drawing for centering the image!
- */
+ **/
 void DotMatrixNode::drawDot(int x, int y) {
 	// Move to X, Y, Zhigh
 
@@ -36,6 +39,10 @@ void DotMatrixNode::drawDot(int x, int y) {
 	// TODO: find the Z for drawing
 
 	// Move to X, Y, Zhigh
+
+	// Done dotting?
+
+	std::cout << x << " " << y << std::endl;
 }
 
 void DotMatrixNode::run( ) {
@@ -46,8 +53,15 @@ void DotMatrixNode::run( ) {
 	assert(image.height <= DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM);
 
 	// Calculate X,Y by converting X,Y in pixels to X,Y in mm
-	double deltaRobotX = -(DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0);
-	double deltaRobotY = DotMatrixNodeSettings::DRAW_FIELD_WIDTH / 2.0;
+	// ===========
+	// =+--------=  + = Startpoint of the drawing (0,0)
+	// =---------=
+	// =----x----=  x = Startpoint of deltarobot (0,0)
+	// =---------=
+	// =---------=
+	// ===========
+	double drawX = -(DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0);
+	double drawY = DotMatrixNodeSettings::DRAW_FIELD_WIDTH / 2.0;
 
 	
 
@@ -56,20 +70,20 @@ void DotMatrixNode::run( ) {
 		if(j % 2 == 0){
 			for (; (pixelPointer + 1) % width != 0; pixelPointer++) {
 				//TODO if(imageData[pixelPointer]){
-					drawDot(deltaRobotX, deltaRobotY);
+					drawDot(drawX, drawY);
 				//}
-				deltaRobotX += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+				drawX += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
 			}
 		} else {
 			for (; pixelPointer % width != 0; pixelPointer--) {
 				//TODO if(imageData[pixelPointer]){
-					drawDot(deltaRobotX, deltaRobotY);
+					drawDot(drawX, drawY);
 				//}
-				deltaRobotX -= DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+				drawX -= DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
 			}
 		}
 		pixelPointer += width;
-		deltaRobotY += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+		drawY += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
 	}
 
 	//for (unsigned int i = 0; i < gimp_image.height * gimp_image.width * gimp_image.bytes_per_pixel; i += gimp_image.bytes_per_pixel) {
