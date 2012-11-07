@@ -14,8 +14,11 @@
 #define NODE_NAME "GripperNode"
 
 DotMatrixNode::DotMatrixNode( ) :
-		imageTransport(node) {
-
+		imageTransport(nodeHandle), deltaRobotClient(nodeHandle.serviceClient<deltaRobotNode::MoveToPoint>(DeltaRobotNodeServices::MOVE_TO_POINT)) {
+	moveToPointService.request.motion.x = 0;
+	moveToPointService.request.motion.y = 0;
+	moveToPointService.request.motion.z = -230;
+	moveToPointService.request.motion.speed = 300;
 }
 
 DotMatrixNode::~DotMatrixNode( ) {
@@ -37,14 +40,27 @@ void DotMatrixNode::drawDot(int x, int y) {
 	// Move to Zhigh
 
 	// Done dotting?
+
+	std::cout << x << " " << y << std::endl;
 }
 
 void DotMatrixNode::run( ) {
 	// Calculate X,Y by converting X,Y in pixels to X,Y in mm
-	double startX = DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0;
+	// ===========
+	// =-+-------=  + = Startpoint of the drawing (0,0)
+	// =---------=
+	// =----x----=  x = Startpoint of deltarobot (0,0)
+	// =---------=
+	// =---------=
+	// ===========
+	double startX = -(DotMatrixNodeSettings::DRAW_FIELD_WIDTH / 2.0);
+	double startY = -(DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0);
 
-	 //* Converts the coordinates to the deltarobot coordinates (x,y,z)
-
+	//* Converts the coordinates to the deltarobot coordinates (x,y,z)
+	std::cout << startX << std::endl;
+	for (int i = 0; i < 10; ++i) {
+		drawDot((i % DotMatrixNodeSettings::DRAW_FIELD_WIDTH) + startX, (i / DotMatrixNodeSettings::DRAW_FIELD_WIDTH) + startY);
+	}
 
 	for (unsigned int i = 0; i < gimp_image.height * gimp_image.width * gimp_image.bytes_per_pixel; i += gimp_image.bytes_per_pixel) {
 		if (i % 50 == 0) {
