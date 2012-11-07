@@ -15,13 +15,13 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 rexos_rospack_init("dotMatrixNode" false false)
 
 # Add executables as documented by ROS
-rosbuild_add_executable(dotMatrixNode src/DotMatrixNode.cpp)
+rosbuild_add_executable(DotMatrixNode src/DotMatrixNode.cpp)
 
 # Include our libraries, they are all exported in Libraries/LibrariesExport.cmake
 
 include_directories(${LIB_UTILITIES_INCLUDE} ${Boost_INCLUDE_DIRS})
 
-target_link_libraries(dotMatrixNode utilities ${Boost_SYSTEM_LIBRARY})
+target_link_libraries(DotMatrixNode utilities ${Boost_SYSTEM_LIBRARY})
 
 # MUST be called after lcv_rospack_init to clean up after ROSBUILD!
 rexos_rospack_end()
