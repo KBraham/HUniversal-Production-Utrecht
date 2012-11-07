@@ -19,7 +19,7 @@ namespace DotMatrixNodeSettings {
 	static const double DRAW_FIELD_DOTS_PER_MM = 2;
 	static const double DRAW_FIELD_MM_PER_DOTS = 0.5;
 
-	static const double DRAW_FIELD_Z_LOW = 300;//TODO: ?
-	static const double DRAW_FIELD_Z_HIGH = 280;//TODO: ?
+	static const double DRAW_FIELD_Z_LOW = -250;//TODO: ?
+	static const double DRAW_FIELD_Z_HIGH = -230;//TODO: ?
 
 }

@@ -28,7 +28,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#include "ImageTransformationNode.h"
+#include "ImageTransformationNode/ImageTransformationNode.h"
 
 #define NODE_NAME "ImageTransformationNode"
 
@@ -101,6 +101,12 @@ void ImageTransformationNode::transformCallback(const sensor_msgs::ImageConstPtr
 	} catch (cv_bridge::Exception& e) {
 		ROS_ERROR("cv_bridge exception: %s", e.what());
 		return;
+	}
+
+	cv_ptr->image = cv::imread("/home/kbraham/Pictures/qr.png");
+	if(cv_ptr->image.data == NULL){
+		std::cerr << "Invalid image" << std::endl;
+		exit(1);
 	}
 
 	double scale = std::max(

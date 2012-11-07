@@ -11,6 +11,8 @@
 #include <DotMatrixNode/DotMatrixNode.h>
 #include <DotMatrixNode/DotMatrixNodeSettings.h>
 #include <DotMatrixNode/Image.h>
+#include <DeltaRobotNode/Services.h>
+#include <ImageTransformationNode/Topics.h>
 
 #define NODE_NAME "GripperNode"
 
@@ -34,68 +36,100 @@ DotMatrixNode::~DotMatrixNode( ) {
  **/
 void DotMatrixNode::drawDot(int x, int y) {
 	// Move to X, Y, Zhigh
+	moveToPointService.request.motion.x = x;
+	moveToPointService.request.motion.y = y;
+	moveToPointService.request.motion.z = DotMatrixNodeSettings::DRAW_FIELD_Z_HIGH;
+	deltaRobotClient.call(moveToPointService);
 
 	// Move to X, Y, Zlow
 	// TODO: find the Z for drawing
+	moveToPointService.request.motion.x = x;
+	moveToPointService.request.motion.y = y;
+	moveToPointService.request.motion.z = DotMatrixNodeSettings::DRAW_FIELD_Z_LOW;
+	deltaRobotClient.call(moveToPointService);
 
 	// Move to X, Y, Zhigh
+	moveToPointService.request.motion.x = x;
+	moveToPointService.request.motion.y = y;
+	moveToPointService.request.motion.z = DotMatrixNodeSettings::DRAW_FIELD_Z_HIGH;
+	deltaRobotClient.call(moveToPointService);
 
 	// Done dotting?
 
 	std::cout << x << " " << y << std::endl;
 }
 
-void DotMatrixNode::run( ) {
-	//TODO imageData;
 
-	//TODO assert sizewise? fix later for total size?
-	assert(image.width <= DotMatrixNodeSettings::DRAW_FIELD_WIDTH * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM);
-	assert(image.height <= DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM);
+/**
+ * Transforms the image on the topic to the correct size and format and publishes to a new topic.
+ *
+ * @param msg The pointer to the message that contains the camera image.
+ **/
+void DotMatrixNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 
-	// Calculate X,Y by converting X,Y in pixels to X,Y in mm
-	// ===========
-	// =+--------=  + = Startpoint of the drawing (0,0)
-	// =---------=
-	// =----x----=  x = Startpoint of deltarobot (0,0)
-	// =---------=
-	// =---------=
-	// ===========
-	double drawX = -(DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0);
-	double drawY = DotMatrixNodeSettings::DRAW_FIELD_WIDTH / 2.0;
-
-	
-
-	unsigned int pixelPointer = 0;
-	for(unsigned int j = 0; j < height; j++){
-		if(j % 2 == 0){
-			for (; (pixelPointer + 1) % width != 0; pixelPointer++) {
-				//TODO if(imageData[pixelPointer]){
-					drawDot(drawX, drawY);
-				//}
-				drawX += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
-			}
-		} else {
-			for (; pixelPointer % width != 0; pixelPointer--) {
-				//TODO if(imageData[pixelPointer]){
-					drawDot(drawX, drawY);
-				//}
-				drawX -= DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
-			}
-		}
-		pixelPointer += width;
-		drawY += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+	// Receive image
+	cv_bridge::CvImagePtr cv_ptr;
+	try {
+		cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO8);
+	} catch (cv_bridge::Exception& e) {
+		ROS_ERROR("cv_bridge exception: %s", e.what());
+		return;
 	}
 
-	//for (unsigned int i = 0; i < gimp_image.height * gimp_image.width * gimp_image.bytes_per_pixel; i += gimp_image.bytes_per_pixel) {
-	//	if (i % 50 == 0) {
-	//		std::cout << std::endl;
-	//	}
-	//	if (gimp_image.pixel_data[i] == 0 && gimp_image.pixel_data[i] == gimp_image.pixel_data[i + 1] && gimp_image.pixel_data[i + 1] == gimp_image.pixel_data[i + 2]) {
-	//		std::cout << "#";
-	//	} else {
-	//		std::cout << " ";
-	//	}
-	//}
+	std::cout << "Encoding: " << cv_ptr->encoding << std::endl;
+
+	int cols = cv_ptr->image.cols;
+	int rows = cv_ptr->image.rows;
+
+		//TODO assert sizewise? fix later for total size?
+		assert(cols <= DotMatrixNodeSettings::DRAW_FIELD_WIDTH * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM);
+		assert(rows <= DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM);
+
+		// Calculate X,Y by converting X,Y in pixels to X,Y in mm
+		// ===========
+		// =+--------=  + = Startpoint of the drawing (0,0)
+		// =---------=
+		// =----x----=  x = Startpoint of deltarobot (0,0)
+		// =---------=
+		// =---------=
+		// ===========
+		double drawX = -(DotMatrixNodeSettings::DRAW_FIELD_WIDTH / 2.0);
+		double drawY = DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0;
+
+		unsigned int pixelPointer = 0;
+		for (int j = 0; j < rows; j++) {
+			if (j % 2 == 0) {
+				for (; (pixelPointer + 1) % cols != 0; pixelPointer++) {
+					if(cv_ptr->image.data[pixelPointer] == 0){
+						drawDot(drawX, drawY);
+					}
+					drawX += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+				}
+			} else {
+				for (; pixelPointer % cols != 0; pixelPointer--) {
+					if(cv_ptr->image.data[pixelPointer] == 0){
+						drawDot(drawX, drawY);
+					}
+					drawX -= DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+				}
+			}
+			pixelPointer += cols;
+			drawY -= DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+		}
+}
+
+
+/**
+ * Blocking function that contains the main loop.
+ * Spins in ROS to receive frames. These will execute the callbacks.
+ * This function ends when ros receives a ^c
+ **/
+void DotMatrixNode::run( ) {
+	imageSubscriber = imageTransport.subscribe(ImageTransformationNodeTopics::TRANSFORMED_IMAGE, 1, &DotMatrixNode::imageCallback, this, image_transport::TransportHints("compressed"));
+
+	while(ros::ok()) {
+		ros::spinOnce();
+	}
 }
 
 int main(int argc, char** argv) {
