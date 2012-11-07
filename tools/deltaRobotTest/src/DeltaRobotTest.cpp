@@ -197,7 +197,7 @@ int main(int argc, char **argv){
 		std:: cout << "y-value: " << yvalue << std::endl;
 		std:: cout << "z-value: " << zvalue << std::endl;
 		std:: cout << "z-value from calibration point: " << zvalueFromCalibrationPoint << std::endl;
-		std:: cout << "Press any key to move another mm down" << std::endl;
+		std:: cout << "Press 'a' to go left, 'd' to go right, 'w' to go back, 's' to move forward, 'r' to go up and 'f' to go down." << std::endl;
 		std:: cin >> keyPress;
 	}
 
