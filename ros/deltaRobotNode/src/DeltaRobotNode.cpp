@@ -245,7 +245,7 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::moveToRelativePoint(deltaRobotNode
 		double relativeY = effectorLocation.y + currentMotion.y;
 		double relativeZ = effectorLocation.z + currentMotion.z;
 		ROS_INFO("Current motion z: %f", currentMotion.z);
-
+		ROS_INFO("New location: x: %f y: %f z: %f", relativeX, relativeY, relativeZ);
 		if(!deltaRobot->checkPath(
 				DataTypes::Point3D<double>(effectorLocation.x, effectorLocation.y, effectorLocation.z),
 				DataTypes::Point3D<double>(relativeX, relativeY, relativeZ)))

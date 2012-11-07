@@ -121,7 +121,7 @@ int main(int argc, char **argv){
 	int startingDropValue = -70;
 
 	// Test MoveToPoint Service.
-	std:: cout << "Press any key to move " << startingDropValue << " mm down" << std::endl;
+	std:: cout << "Press any key to move z=z" << startingDropValue << " mm (down)" << std::endl;
 	std:: cin >> keyPress;
 	moveToRelativePointService.request.motion.x = 0;
 	moveToRelativePointService.request.motion.y = 0;
@@ -197,7 +197,8 @@ int main(int argc, char **argv){
 		std:: cout << "y-value: " << yvalue << std::endl;
 		std:: cout << "z-value: " << zvalue << std::endl;
 		std:: cout << "z-value from calibration point: " << zvalueFromCalibrationPoint << std::endl << std::endl;
-		std:: cout << "Press 'a' to go left;" << std::endl << 
+		std:: cout << "Press:" << std::endl << 
+					  "'a' to go left;" << std::endl << 
 					  "'d' to go right;" << std::endl << 
 					  "'w' to go back;" << std::endl << 
 					  "'s' to move forward;" << std::endl << 
