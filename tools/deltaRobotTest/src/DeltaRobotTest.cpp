@@ -127,7 +127,7 @@ int main(int argc, char **argv){
 	moveToRelativePointService.request.motion.speed = speed;
 	moveToRelativePointClient.call(moveToRelativePointService);
 
-	int i = 25;
+	int i = 50+196.063;
 
 	for(; keyPress != 'q';) {
 		// Test MoveToPoint Service.
