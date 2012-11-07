@@ -53,7 +53,6 @@ class ImageTransformationNode
 {
 	public:
 		ImageTransformationNode(int equipletID, int moduleID);
-		~ImageTransformationNode();
 
 		void publishImage();
 		void run();

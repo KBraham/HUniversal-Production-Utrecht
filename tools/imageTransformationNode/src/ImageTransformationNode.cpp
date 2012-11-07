@@ -76,12 +76,6 @@ ImageTransformationNode::ImageTransformationNode(int equipletID, int moduleID) :
 }
 
 /**
- * Destructor
- **/
-ImageTransformationNode::~ImageTransformationNode() {
-}
-
-/**
  * Publishes the outputImage as a CvImage with the cv_bridge.
  **/
 void ImageTransformationNode::publishImage(){
