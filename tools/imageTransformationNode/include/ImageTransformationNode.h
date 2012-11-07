@@ -1,28 +1,41 @@
 #ifndef ImageTransformationNode_H
 #define ImageTransformationNode_H
 
-#include <rosMast/StateMachine.h>
-#include "ros/ros.h"
-#include "Topics.h"
 #include "iostream"
 
-// TODO: #include <DotMatrixNode/DotMatrixNodeSettings.h>
+#include "ros/ros.h"
 
-class ImageTransformationNode: public rosMast::StateMachine
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <image_transport/image_transport.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
+
+#include "Topics.h"
+#include "Utilities/Utilities.h"
+#include "DotMatrixNode/DotMatrixNodeSettings.h"
+
+class ImageTransformationNode
 {
 	public:
 		ImageTransformationNode(int equipletID, int moduleID);
 		~ImageTransformationNode();
+
+		void publishImage();
+		void run();
 	private:
-		int blockSize = 15;
-		int maximum = 255;
-		int subtract = 15;
+		void transformCallback(const sensor_msgs::ImageConstPtr& msg);
+
+		int blockSize;
+		int maximum;
+		int subtract;
 
 		cv::Mat inputImage;
 		cv::Mat outputImage;
 
-		ros::NodeHandle NodeHandle;
-		image_transport::ImageTransport it;
+		ros::NodeHandle nodeHandle;
+		image_transport::ImageTransport imageTransport;
 		image_transport::Publisher pub;
 		image_transport::Subscriber cameraSubscriber;
 };

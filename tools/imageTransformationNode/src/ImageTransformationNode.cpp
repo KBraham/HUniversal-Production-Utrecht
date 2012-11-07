@@ -18,41 +18,39 @@ static const char WINDOW_NAME[] = "Image window";
  * @param param Output image to publish on topic.
  **/
 void on_mouse(int event, int x, int y, int flags, void* param) {
-	if (event == CV_EVENT_LBUTTONDOWN) {
-		
+	if (event == CV_EVENT_RBUTTONDOWN) {
+		((ImageTransformationNode*)param)->publishImage();
 	}
 }
 
 /**
  * Constructor 
  **/
-ImageTransformationNode::ImageTransformationNode(int equipletID, int moduleID): rosMast::StateMachine(equipletID, moduleID) {
+ImageTransformationNode::ImageTransformationNode(int equipletID, int moduleID) : imageTransport(nodeHandle) {
+	blockSize = 15;
+	maximum = 255;
+	subtract = 15;
+
 	ros::NodeHandle nodeHandle;
 	// Advertise the services
-	pub = it.advertise(ImageTransformationNodeTopics::TRANSFORMED_IMAGE, 1);
+	pub = imageTransport.advertise(ImageTransformationNodeTopics::TRANSFORMED_IMAGE, 1);
 
 	// OpenCV GUI
-	cv::namedWindow(WINDOW_NAME);
-	cv::createTrackbar( "blockSize:", WINDOW_NAME, &blockSize, maximum );
-	cv::createTrackbar( "subtract :", WINDOW_NAME, &subtract, maximum );
+	cv::namedWindow(WINDOW_NAME, CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO);
+	cv::createTrackbar("blockSize:", WINDOW_NAME, &blockSize, maximum );
+	cv::createTrackbar("subtract :", WINDOW_NAME, &subtract, maximum );
 
-	// TODO service for the dotmatrix
-	cvSetMouseCallback(WINDOW_NAME, &on_mouse, outputImage);
+	cvSetMouseCallback(WINDOW_NAME, &on_mouse, this);
 }
 
-/**
- * Callback function for the calibration procedure.
- * Receives an image of the image topic and tries to detect all fiducials that are present.
- **/
-void CrateLocatorNode::transformCallback(const sensor_msgs::ImageConstPtr& msg) {
-	// Receive image
-	cv_bridge::CvImagePtr cv_ptr;
-	try {
-		cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
-	} catch (cv_bridge::Exception& e) {
-		ROS_ERROR("cv_bridge exception: %s", e.what());
-		return;
-	}
+void ImageTransformationNode::publishImage(){
+	ros::Time time = ros::Time::now();
+	cv_bridge::CvImage cvi;
+	cvi.header.stamp = time;
+	cvi.header.frame_id = "image";
+	cvi.encoding = sensor_msgs::image_encodings::MONO8;
+	cvi.image = outputImage;
+	pub.publish(cvi.toImageMsg());
 }
 
 /**
@@ -68,19 +66,22 @@ void ImageTransformationNode::transformCallback(const sensor_msgs::ImageConstPtr
 		return;
 	}
 
-	//TODO get these values from DotMatrixNodeSettings
-	double scale = std::min(cv_ptr->image.rows / 350/*pixel height*/, cv_ptr->image.cols / 220/*pixel width*/);
-	cv::Size outputSize = cv::Size(cv_ptr->image.rows / scale, cv_ptr->image.cols / scale);
-	cv::resize(cv_ptr->image, outputImage, outputSize);
+	double scale = std::max(
+		cv_ptr->image.rows / (DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM), 
+		cv_ptr->image.cols / (DotMatrixNodeSettings::DRAW_FIELD_WIDTH * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM));
+	cv::Size outputSize = cv::Size(cv_ptr->image.cols / scale, cv_ptr->image.rows / scale);
+
+	cv::Mat resizedImage;
+	cv::resize(cv_ptr->image, resizedImage, outputSize);
 
 	cv::Mat grayImage;
-	cv::cvtColor(outputImage, grayImage, CV_BGR2GRAY);
+	cv::cvtColor(resizedImage, grayImage, CV_BGR2GRAY);
 	
 	//Threshold the image, note that blocksize has to be a multiple of 3 and >= 3.
 	cv::Mat thresholdedImage;
-	cv::adaptiveThreshold(grayImage, thresholdedImage, 255, CV_ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY, blockSize < 3 ? 3 : blockSize | 1, subtract);
-
-	cv::imshow(WINDOW_NAME, thresholdedImage);
+	cv::adaptiveThreshold(grayImage, outputImage, 255, CV_ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY, blockSize < 3 ? 3 : blockSize | 1, subtract);
+	//TODO determine if output is a safe image to use for sending onwards
+	cv::imshow(WINDOW_NAME, outputImage);
 	cv::waitKey(3);
 }
 
@@ -96,7 +97,7 @@ ImageTransformationNode::~ImageTransformationNode() {
  * This function ends when ros receives a ^c
  **/
 void ImageTransformationNode::run( ) {
-	cameraSubscriber = imageTransport.subscribe("camera/image", 1, &CrateLocatorNode::transformCallback, this/*, image_transport::TransportHints("compressed")*/);
+	cameraSubscriber = imageTransport.subscribe("camera/image", 1, &ImageTransformationNode::transformCallback, this, image_transport::TransportHints("compressed"));
 
 	while(ros::ok()) {
 		ros::spinOnce();
@@ -112,9 +113,7 @@ int main(int argc, char** argv){
     	std::cerr << "Cannot read equiplet id and/or moduleId from commandline please use correct values." << std::endl;
  		return -1;
   	} 
-
-	ImageTransformationNode ImageTransformationNode(equipletID, moduleID);    
-
-	ImageTransformationNode.startStateMachine();
+	ImageTransformationNode imageTransformationNode(equipletID, moduleID);
+	imageTransformationNode.run();
 	return 0;
 }
