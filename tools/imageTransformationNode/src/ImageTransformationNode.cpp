@@ -64,7 +64,6 @@ ImageTransformationNode::ImageTransformationNode(int equipletID, int moduleID) :
 	maximum = 255;
 	subtract = 15;
 
-	ros::NodeHandle nodeHandle;
 	// Advertise the services
 	pub = imageTransport.advertise(ImageTransformationNodeTopics::TRANSFORMED_IMAGE, 1);
 
@@ -74,6 +73,12 @@ ImageTransformationNode::ImageTransformationNode(int equipletID, int moduleID) :
 	cv::createTrackbar("subtract :", WINDOW_NAME, &subtract, maximum );
 
 	cvSetMouseCallback(WINDOW_NAME, &on_mouse, this);
+}
+
+/**
+ * Destructor
+ **/
+ImageTransformationNode::~ImageTransformationNode() {
 }
 
 /**
@@ -121,12 +126,6 @@ void ImageTransformationNode::transformCallback(const sensor_msgs::ImageConstPtr
 	//TODO determine if output is a safe image to use for sending onwards
 	cv::imshow(WINDOW_NAME, outputImage);
 	cv::waitKey(3);
-}
-
-/**
- * Destructor
- **/
-ImageTransformationNode::~ImageTransformationNode() {
 }
 
 /**
