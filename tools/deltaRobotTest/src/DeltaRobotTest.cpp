@@ -118,7 +118,7 @@ int main(int argc, char **argv){
 	//std:: cin >> keyPress;    
 	calibrateClient.call(calibrateService);
 
-	int startingDropValue = 70;
+	int startingDropValue = -70;
 
 	// Test MoveToPoint Service.
 	std:: cout << "Press any key to move " << startingDropValue << " mm down" << std::endl;
@@ -130,23 +130,75 @@ int main(int argc, char **argv){
 	moveToRelativePointClient.call(moveToRelativePointService);
 
 	int zvalueFromCalibrationPoint = startingDropValue;
-	int zvalue = startingDropValue + 196.063;
+	int zvalue = startingDropValue + -196.063;
+	int xvalue = 0;
+	int yvalue = 0;
 
 	for(; keyPress != 'q';) {
-		// Test MoveToPoint Service.
-		std:: cout << "z-value: " << -zvalue << std::endl;
-		std:: cout << "z-value from calibration point: " << -zvalueFromCalibrationPoint << std::endl;
+		if(keyPress == 's') {
+			// Move one mm back
+			moveToRelativePointService.request.motion.x = 0;
+			moveToRelativePointService.request.motion.y = -1;
+			moveToRelativePointService.request.motion.z = 0;
+			moveToRelativePointService.request.motion.speed = speed;
+			moveToRelativePointClient.call(moveToRelativePointService);
+
+			yvalue--;
+		} else if(keyPress == 'w') {
+			// Move one mm forward
+			moveToRelativePointService.request.motion.x = 0;
+			moveToRelativePointService.request.motion.y = 1;
+			moveToRelativePointService.request.motion.z = 0;
+			moveToRelativePointService.request.motion.speed = speed;
+			moveToRelativePointClient.call(moveToRelativePointService);
+
+			yvalue++;
+		} else if(keyPress == 'a') {
+			// Move one mm left
+			moveToRelativePointService.request.motion.x = 1;
+			moveToRelativePointService.request.motion.y = 0;
+			moveToRelativePointService.request.motion.z = 0;
+			moveToRelativePointService.request.motion.speed = speed;
+			moveToRelativePointClient.call(moveToRelativePointService);
+
+			xvalue++;
+		} else if(keyPress == 'd') {
+			// Move one mm right
+			moveToRelativePointService.request.motion.x = -1;
+			moveToRelativePointService.request.motion.y = 0;
+			moveToRelativePointService.request.motion.z = 0;
+			moveToRelativePointService.request.motion.speed = speed;
+			moveToRelativePointClient.call(moveToRelativePointService);
+
+			xvalue--;
+		} else if(keyPress == 'r') {
+			// Move one mm up
+			moveToRelativePointService.request.motion.x = 0;
+			moveToRelativePointService.request.motion.y = 0;
+			moveToRelativePointService.request.motion.z = 1;
+			moveToRelativePointService.request.motion.speed = speed;
+			moveToRelativePointClient.call(moveToRelativePointService);
+
+			zvalueFromCalibrationPoint++;
+			zvalue++;
+		} else if(keyPress == 'f') {
+			// Move one mm down
+			moveToRelativePointService.request.motion.x = 0;
+			moveToRelativePointService.request.motion.y = 0;
+			moveToRelativePointService.request.motion.z = -1;
+			moveToRelativePointService.request.motion.speed = speed;
+			moveToRelativePointClient.call(moveToRelativePointService);
+
+			zvalueFromCalibrationPoint--;
+			zvalue--;
+		}
+
+		std:: cout << "x-value: " << xvalue << std::endl;
+		std:: cout << "y-value: " << yvalue << std::endl;
+		std:: cout << "z-value: " << zvalue << std::endl;
+		std:: cout << "z-value from calibration point: " << zvalueFromCalibrationPoint << std::endl;
 		std:: cout << "Press any key to move another mm down" << std::endl;
 		std:: cin >> keyPress;
-
-		moveToRelativePointService.request.motion.x = 0;
-		moveToRelativePointService.request.motion.y = 0;
-		moveToRelativePointService.request.motion.z = -1;
-		moveToRelativePointService.request.motion.speed = speed;
-		moveToRelativePointClient.call(moveToRelativePointService);
-
-		zvalueFromCalibrationPoint++;
-		zvalue++;
 	}
 
 	// Test MoveToPoint Service.
