@@ -206,6 +206,7 @@ int main(int argc, char **argv){
 					  "'f' to go down;" << std::endl << 
 					  "'q' to quit." << std::endl;
 		std:: cin >> keyPress;
+		ros::spinOnce();
 	}
 
 	// Test MoveToPoint Service.

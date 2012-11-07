@@ -240,20 +240,20 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::moveToRelativePoint(deltaRobotNode
 	try {
 		currentMotion = req.motion;
 		DataTypes::Point3D<double>& effectorLocation = deltaRobot->getEffectorLocation();
-		ROS_INFO("Current effector location: x: %f y: %f z: %f", effectorLocation.x, effectorLocation.y, effectorLocation.z);
+		ROS_INFO("From location: x: %f y: %f z: %f", effectorLocation.x, effectorLocation.y, effectorLocation.z);
 		double relativeX = effectorLocation.x + currentMotion.x;
 		double relativeY = effectorLocation.y + currentMotion.y;
 		double relativeZ = effectorLocation.z + currentMotion.z;
-		ROS_INFO("Current motion z: %f", currentMotion.z);
-		ROS_INFO("New location: x: %f y: %f z: %f", relativeX, relativeY, relativeZ);
+		ROS_INFO("To location: x: %f y: %f z: %f", relativeX, relativeY, relativeZ);
 		if(!deltaRobot->checkPath(
 				DataTypes::Point3D<double>(effectorLocation.x, effectorLocation.y, effectorLocation.z),
 				DataTypes::Point3D<double>(relativeX, relativeY, relativeZ)))
 		{
+			ROS_INFO("Path is illigal");
 			return true;
 		}
 		deltaRobot->moveTo(DataTypes::Point3D<double>(relativeX, relativeY, relativeZ), currentMotion.speed);
-
+		ROS_INFO("DeltaRobot moved succesfully");
 	} catch(std::runtime_error& ex) {
 		std::stringstream ss;
 		ss << "runtime error of type "<< typeid(ex).name()<<" in delta robot" << std::endl;
