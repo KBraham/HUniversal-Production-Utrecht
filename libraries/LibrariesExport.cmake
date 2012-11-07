@@ -19,4 +19,5 @@ set(LIB_MODBUS_CONTROLLER_INCLUDE "${REXOS_SOURCE_DIR}/libraries/modbusControlle
 set(LIB_UTILITIES_INCLUDE "${REXOS_SOURCE_DIR}/libraries/utilities/include")
 set(LIB_MOTOR_INCLUDE "${REXOS_SOURCE_DIR}/libraries/motor/include")
 set(NODE_DELTA_ROBOT "${REXOS_SOURCE_DIR}/ros/deltaRobotNode/include")
-set(NODE_DOT_MATRIX "${REXOS_SOURCE_DIR}/ros/dotMatrixNode/include")
+set(NODE_DOT_MATRIX "${REXOS_SOURCE_DIR}/tools/dotMatrixNode/include")
+set(NODE_IMAGE_TRANSFORMATION "${REXOS_SOURCE_DIR}/tools/imageTransformationNode/include")
