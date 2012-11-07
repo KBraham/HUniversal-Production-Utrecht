@@ -149,9 +149,11 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint(deltaRobotNode::MoveTo
 		res.succeeded = false;
 		return true;
 	}
-
+	
 	DataTypes::Point3D<double>& effectorLocation = deltaRobot->getEffectorLocation();
+	ROS_INFO("From location: x: %f y: %f z: %f", effectorLocation.x, effectorLocation.y, effectorLocation.z);
 	deltaRobotNode::Motion motion = req.motion;
+	ROS_INFO("To location: x: %f y: %f z: %f", motion.x, motion.y, motion.z);
 	/**
 	 * Check if the DeltaRobot can move from the current effector location
 	 * to the absolute point given as argument for this service.
@@ -160,6 +162,7 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint(deltaRobotNode::MoveTo
 		DataTypes::Point3D<double>(effectorLocation.x, effectorLocation.y, effectorLocation.z),
 		DataTypes::Point3D<double>(motion.x, motion.y, motion.z)))
 	{
+		ROS_INFO("Path is illigal");
 		res.succeeded = false;
 		return true;
 	}
