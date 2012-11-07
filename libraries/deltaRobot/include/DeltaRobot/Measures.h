@@ -113,7 +113,7 @@ namespace DeltaRobot{
 		 * @var double BOUNDARY_BOX_MIN_Z
 		 * The min z-coordinate of the effector boundary box in millimeters.
 		 **/
-		const double BOUNDARY_BOX_MIN_Z = -300;
+		const double BOUNDARY_BOX_MIN_Z = -310;
 
 		/**
 		 * @var double BOUNDARY_BOX_MAX_Z
