@@ -80,10 +80,10 @@ namespace DeltaRobot{
 		const double MOTOR_ROT_MAX = Utilities::degreesToRadians(45);
 		
 		/**
-		 * @var double MOTORS_FROM_ZERO_TO_TOP_POSITION
+		 * @var double MOTORS_FROM_ZERO_TO_TOP_POS1ITION
 		 * The angle from zero (horizontal) to the top position in radians.
 		 **/
-		const double MOTORS_FROM_ZERO_TO_TOP_POSITION = Utilities::degreesToRadians(42.5); 
+		const double MOTORS_FROM_ZERO_TO_TOP_POS1ITION = Utilities::degreesToRadians(42.5); 
 
 		/**
 		 * @var double BOUNDARY_BOX_MAX_X

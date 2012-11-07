@@ -32,6 +32,7 @@
 #include <Motor/MotorManager.h>
 #include <Motor/CRD514KD.h>
 #include <Motor/MotorException.h>
+#include <Utilities/Utilities.h>
 
 extern "C"{
     #include <modbus/modbus.h>
@@ -65,22 +66,45 @@ namespace Motor{
 	/**
 	 * Start simultaneously movement of all motors
 	 **/
-	void MotorManager::startMovement(void){
+	void MotorManager::startMovement(int motionSlot){
 		if(!poweredOn){
             throw MotorException("motor manager is not powered on");
         }
 
+        Utilities::StopWatch stopwatch("waitTillReady timer");
+
+        int afterWait = 0, afterStart = 0, afterUpdate = 0;
+
         // Execute motion.
+        stopwatch.start();
+   
         motors[0]->waitTillReady();
         motors[1]->waitTillReady();
         motors[2]->waitTillReady();
 
-        modbus->writeU16(CRD514KD::Slaves::BROADCAST, CRD514KD::Registers::CMD_1, CRD514KD::CMD1Bits::EXCITEMENT_ON);
-        modbus->writeU16(CRD514KD::Slaves::BROADCAST, CRD514KD::Registers::CMD_1, CRD514KD::CMD1Bits::EXCITEMENT_ON | CRD514KD::CMD1Bits::START);
+        afterWait = stopwatch.getTime();
+        
+        if(motionSlot == 1){
+        	modbus->writeU16(CRD514KD::Slaves::BROADCAST, CRD514KD::Registers::CMD_1, CRD514KD::CMD1Bits::SELECT_MOTION_1 | CRD514KD::CMD1Bits::EXCITEMENT_ON | CRD514KD::CMD1Bits::START);
+        } else if (motionSlot == 2){
+        	modbus->writeU16(CRD514KD::Slaves::BROADCAST, CRD514KD::Registers::CMD_1, CRD514KD::CMD1Bits::SELECT_MOTION_2 | CRD514KD::CMD1Bits::EXCITEMENT_ON | CRD514KD::CMD1Bits::START);
+        } else {
+        	throw std::out_of_range("motion slot out of range");
+        }
+
         modbus->writeU16(CRD514KD::Slaves::BROADCAST, CRD514KD::Registers::CMD_1, CRD514KD::CMD1Bits::EXCITEMENT_ON);
 
-        motors[0]->updateAngle();
-        motors[1]->updateAngle();
-        motors[2]->updateAngle();
+        afterStart = stopwatch.getTime();
+
+        motors[0]->updateAngle(motionSlot);
+        motors[1]->updateAngle(motionSlot);
+        motors[2]->updateAngle(motionSlot);
+
+        afterUpdate = stopwatch.getTime();
+
+        std::cout << "MotorManager::startMovement() timings:" << std::endl
+        	<< "after wait: " << afterWait << std::endl
+        	<< "after start: " << afterStart << std::endl
+        	<< "after update: " << afterUpdate << std::endl;
 	}
 }

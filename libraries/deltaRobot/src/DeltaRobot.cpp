@@ -58,7 +58,8 @@ namespace DeltaRobot{
         motors(motors),
         effectorLocation(DataTypes::Point3D<double>(0, 0, 0)), 
         boundariesGenerated(false),
-        modbusIO(modbusIO){
+        modbusIO(modbusIO),
+        motionSlot(1){
 
         if(modbusIO == NULL){
             throw std::runtime_error("Unable to open modbusIO");
@@ -116,13 +117,40 @@ namespace DeltaRobot{
         return boundaries->checkPath(begin, end);
     }
 
+    double DeltaRobot::getAccelerationForMotor(double relativeAngle, double moveTime){
+        return (4 * relativeAngle) / (moveTime * moveTime);
+    }
+
+    double DeltaRobot::getSpeedForMotor(double relativeAngle, double moveTime, double acceleration){
+        return (acceleration/2) * (moveTime - sqrt((moveTime * moveTime) - (4 * relativeAngle / acceleration)));
+    }
+
     /**
      * Makes the deltarobot move to a point.
      * 
      * @param point 3-dimensional point to move to.
      * @param speed Movement speed in millimeters per second.
      **/
-    void DeltaRobot::moveTo(const DataTypes::Point3D<double>& point, double speed){
+    void DeltaRobot::moveTo(const DataTypes::Point3D<double>& point, double speed, double maxAcceleration){
+
+        // switch motionSlot
+        if(motionSlot != 1){
+            motionSlot = 1;
+        } else {
+            motionSlot = 2;
+        }
+
+        //for(int i = 0; i < 3; i++){
+        //    motors[i]->waitTillReady();
+        //}
+
+        int timeBeforeModbus = 0, timeAfterWriting = 0, timeAfterMovement = 0;
+        Utilities::StopWatch stopwatch("moveTo timer", true);
+
+        if(maxAcceleration > Motor::CRD514KD::MOTOR_MAX_ACCELERATION){
+            maxAcceleration = Motor::CRD514KD::MOTOR_MAX_ACCELERATION;
+        }
+
         // TODO: Some comments in this function would be nice.
         if(!motorManager->isPoweredOn()){
             throw Motor::MotorException("motor drivers are not powered on");
@@ -156,49 +184,50 @@ namespace DeltaRobot{
             throw InverseKinematicsException("invalid path", point);
         }
 
-        double moveTime = point.distance(effectorLocation) / speed;
         try{
-            bool accelerationFits = true;
+
+            double relativeAngles[3] = {0.0,0.0,0.0};
+            int motorWithBiggestMotion = 0;
 
             for(int i = 0; i < 3; i++){
-                // acceleration = (4 * motion relative angle) / motion time²
-                double relativeAngle = fabs(rotations[i]->angle - motors[i]->getCurrentAngle());
-                rotations[i]->acceleration = (4 * relativeAngle) / (moveTime * moveTime);
-                rotations[i]->deceleration = rotations[i]->acceleration;
+                relativeAngles[i] = fabs(rotations[i]->angle - motors[i]->getCurrentAngle());
+                if (relativeAngles[i] > relativeAngles[motorWithBiggestMotion]){
+                    motorWithBiggestMotion = i;
+                }
+            }
 
-                if(rotations[i]->acceleration < Motor::CRD514KD::MOTOR_MIN_ACCELERATION){
-                    accelerationFits = false;
-                    break;
-                    //std::cout << "motor " << i << " " << rotations[i]->acceleration << " -> " << Motor::CRD514KD::MOTOR_MIN_ACCELERATION << std::endl;
-                    //rotations[i]->acceleration = Motor::CRD514KD::MOTOR_MIN_ACCELERATION;
-                    //rotations[i]->deceleration = Motor::CRD514KD::MOTOR_MIN_ACCELERATION;
-                } else if(rotations[i]->acceleration > Motor::CRD514KD::MOTOR_MAX_ACCELERATION){
-                    accelerationFits = false;
-                    break;
-                    //std::cout << "motor " << i << " " << rotations[i]->acceleration << " -> " << Motor::CRD514KD::MOTOR_MAX_ACCELERATION << std::endl;
-                    //rotations[i]->acceleration = Motor::CRD514KD::MOTOR_MAX_ACCELERATION;
-                    //rotations[i]->deceleration = Motor::CRD514KD::MOTOR_MAX_ACCELERATION;
+            rotations[motorWithBiggestMotion]->acceleration = maxAcceleration;
+            rotations[motorWithBiggestMotion]->deceleration = maxAcceleration;
+
+            double moveTime = 2 * sqrt(relativeAngles[motorWithBiggestMotion] / rotations[motorWithBiggestMotion]->acceleration);
+
+            for(int i = 0; i < 3; i++){
+                if(i != motorWithBiggestMotion){
+                    rotations[i]->acceleration = getAccelerationForMotor(relativeAngles[i], moveTime);
+                    rotations[i]->deceleration = rotations[i]->acceleration;
                 }
 
-                rotations[i]->speed = rotations[i]->acceleration * (moveTime / 2);
+                rotations[i]->speed = Motor::CRD514KD::MOTOR_MAX_SPEED;
 
-                std::cout << "Motor " << i << ": " << std::endl;
-                std::cout << "acc: " << rotations[i]->acceleration << std::endl;
-                std::cout << "dec: " << rotations[i]->deceleration << std::endl;
-                std::cout << "relative angle:  " << relativeAngle << std::endl;
-                std::cout << "intended time: " << moveTime << std::endl;
-                std::cout << "time based on acc: " << relativeAngle / (rotations[i]->acceleration * (moveTime / 4)) << std::endl;
-                std::cout << "Top speed: " << rotations[i]->speed << std::endl;
-                std::cout << "---------------------------------------------" << std::endl;
-                
-                motors[i]->writeRotationData(*rotations[i]);
+                if(rotations[i]->acceleration < Motor::CRD514KD::MOTOR_MIN_ACCELERATION){
+                    rotations[i]->acceleration = Motor::CRD514KD::MOTOR_MIN_ACCELERATION;
+                    rotations[i]->deceleration = Motor::CRD514KD::MOTOR_MIN_ACCELERATION;
+                    rotations[i]->speed = getSpeedForMotor(relativeAngles[i], moveTime, rotations[i]->acceleration);
+                } else if(rotations[i]->acceleration > Motor::CRD514KD::MOTOR_MAX_ACCELERATION){
+                    throw std::out_of_range("acceleration too high");
+                }
             }
 
-            if(accelerationFits) {
-                motorManager->startMovement();
-            } else {
-                std::cout << "Discarding motion" << std::endl;
+            timeBeforeModbus = stopwatch.getTime();
+            for(int i = 0; i < 3; i++){
+                motors[i]->writeRotationData(*rotations[i], motionSlot);
             }
+            timeAfterWriting = stopwatch.getTime();
+
+            motorManager->startMovement(motionSlot);
+
+            timeAfterMovement = stopwatch.getTime();
+
         } catch(std::out_of_range& ex){
             delete rotations[0];
             delete rotations[1];
@@ -210,6 +239,11 @@ namespace DeltaRobot{
         delete rotations[1];
         delete rotations[2];
         effectorLocation = point;
+        std::cout << "moveto method times: " << std::endl 
+            << "before modbus: " << timeBeforeModbus << std::endl 
+            << "after writing: " << timeAfterWriting << std::endl
+            << "after movement: " << timeAfterMovement << std::endl;
+        stopwatch.stop();
     }
 
     /**
@@ -243,7 +277,7 @@ namespace DeltaRobot{
      * @return The amount of motor steps the motor has moved.
      **/
     int DeltaRobot::moveMotorUntilSensorIsOfValue(int motorIndex, DataTypes::MotorRotation motorRotation, bool sensorValue){
-        motors[motorIndex]->writeRotationData(motorRotation, false);
+        motors[motorIndex]->writeRotationData(motorRotation, 1, false);
 
         int steps = 0;
         do {
@@ -284,13 +318,13 @@ namespace DeltaRobot{
         actualAngleInSteps += moveMotorUntilSensorIsOfValue(motorIndex, motorRotation, true);
 
         // calculate and set the deviation.
-        double deviation = (actualAngleInSteps * Motor::CRD514KD::MOTOR_STEP_ANGLE) + Measures::MOTORS_FROM_ZERO_TO_TOP_POSITION;
+        double deviation = (actualAngleInSteps * Motor::CRD514KD::MOTOR_STEP_ANGLE) + Measures::MOTORS_FROM_ZERO_TO_TOP_POS1ITION;
         motors[motorIndex]->setDeviation(deviation);
         
         // Move back to the new 0.
         motors[motorIndex]->setAbsoluteMode();
         motorRotation.angle = 0;
-        motors[motorIndex]->moveTo(motorRotation);
+        motors[motorIndex]->moveTo(motorRotation, 1);
 
         motors[motorIndex]->waitTillReady();
     }

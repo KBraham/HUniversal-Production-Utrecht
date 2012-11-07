@@ -47,7 +47,7 @@ namespace DeltaRobotTestNamespace {
 	 * @var const double speed
 	 * The speed in milimeters the deltarobot moves per second.
 	 **/
-	const double speed = 400.0;
+	const double maxAcceleration = 50.0;
 
 	/**
 	 * @var char keyPress
@@ -75,7 +75,7 @@ namespace DeltaRobotTestNamespace {
 		moveToPointService.request.motion.x = 0;
 		moveToPointService.request.motion.y = 0;
 		moveToPointService.request.motion.z = -196.063;	
-		moveToPointService.request.motion.speed = speed;
+		moveToPointService.request.motion.maxAcceleration = 50;
 		moveToPointClient.call(moveToPointService);
 	}
 }
@@ -123,20 +123,20 @@ int main(int argc, char **argv){
 	// std:: cin >> keyPress;
 
 	// Speed test   
-	for(int i = 100; i <= 600;i += 100){
-		std::cout << "Press any key to start movement at speed: " << i << std::endl;
+	for(int i = 1; i <= 5;i += 1){
+		std::cout << "Press any key to start movement at max acceleration: " << i << std::endl;
 		std::cin >> keyPress;
 		for(int i2 = 0; i2 < 5; i2++){
 			moveToPointService.request.motion.x = -40;
 			moveToPointService.request.motion.y = -40;
 			moveToPointService.request.motion.z = -210;	
-			moveToPointService.request.motion.speed = i;
+			moveToPointService.request.motion.maxAcceleration = i;
 			moveToPointClient.call(moveToPointService);
 
 			moveToPointService.request.motion.x = 40;
 			moveToPointService.request.motion.y = 40;
 			moveToPointService.request.motion.z = -210;	
-			moveToPointService.request.motion.speed = i;
+			moveToPointService.request.motion.maxAcceleration = i;
 			moveToPointClient.call(moveToPointService);
 			if(ros::ok() == false){
 				return 0;
@@ -145,93 +145,93 @@ int main(int argc, char **argv){
 	}
 	
 
-	// moveToStartPoint();
+ 	moveToStartPoint();
 
-	// // Test MoveToRelativePoint Service.
-	// std:: cout << "Press any key to start the MoveToRelativePoint" << std::endl;
-	// std:: cin >> keyPress;   
-	// moveToRelativePointService.request.motion.x = -1;
-	// moveToRelativePointService.request.motion.y = -1;
-	// moveToRelativePointService.request.motion.z = -1;	
-	// moveToRelativePointService.request.motion.speed = speed;
-	// moveToRelativePointClient.call(moveToRelativePointService);
+	// Test MoveToRelativePoint Service.
+	std:: cout << "Press any key to start the MoveToRelativePoint" << std::endl;
+	std:: cin >> keyPress;   
+	moveToRelativePointService.request.motion.x = -1;
+	moveToRelativePointService.request.motion.y = -1;
+	moveToRelativePointService.request.motion.z = -1;	
+	moveToRelativePointService.request.motion.maxAcceleration = maxAcceleration;
+	moveToRelativePointClient.call(moveToRelativePointService);
 
-	// moveToStartPoint();
+	moveToStartPoint();
 
-	// // Test MovePath Service.
-	// std:: cout << "Press any key to start the MovePathService" << std::endl;
-	// std:: cin >> keyPress;   
-	// deltaRobotNode::Motion point1;
-	// deltaRobotNode::Motion point2;
-	// deltaRobotNode::Motion point3;
-	// deltaRobotNode::Motion point4;
-	// point1.x = 10;
-	// point1.y = 10;
-	// point1.z = -210;
-	// point1.speed = speed;
+	// Test MovePath Service.
+	std:: cout << "Press any key to start the MovePathService" << std::endl;
+	std:: cin >> keyPress;   
+	deltaRobotNode::Motion point1;
+	deltaRobotNode::Motion point2;
+	deltaRobotNode::Motion point3;
+	deltaRobotNode::Motion point4;
+	point1.x = 10;
+	point1.y = 10;
+	point1.z = -210;
+	point1.maxAcceleration = maxAcceleration;
 
-	// point2.x = -10;
-	// point2.y = -10;
-	// point2.z = -210;
-	// point2.speed = speed;
+	point2.x = -10;
+	point2.y = -10;
+	point2.z = -210;
+	point2.maxAcceleration = maxAcceleration;
 
-	// point3.x = 30;
-	// point3.y = 30;
-	// point3.z = -190;
-	// point3.speed = speed;
+	point3.x = 30;
+	point3.y = 30;
+	point3.z = -190;
+	point3.maxAcceleration = maxAcceleration;
 
-	// point4.x = -20;
-	// point4.y = 20;
-	// point4.z = -210;
-	// point4.speed = speed;
+	point4.x = -20;
+	point4.y = 20;
+	point4.z = -210;
+	point4.maxAcceleration = maxAcceleration;
 	
-	// movePathService.request.motion.push_back(point1);
-	// movePathService.request.motion.push_back(point2);
-	// movePathService.request.motion.push_back(point3);
-	// movePathService.request.motion.push_back(point4);
-	// movePathClient.call(movePathService);
+	movePathService.request.motion.push_back(point1);
+	movePathService.request.motion.push_back(point2);
+	movePathService.request.motion.push_back(point3);
+	movePathService.request.motion.push_back(point4);
+	movePathClient.call(movePathService);
 
-	// moveToStartPoint();
+	moveToStartPoint();
 
-	// // Test MoveRelativePath Service.
-	// std:: cout << "Press any key to start the MoveRelativePath" << std::endl;
-	// std:: cin >> keyPress; 
-	// for(double z = 0; z < 10; z++){
-	// 	deltaRobotNode::Motion point1;
-	// 	deltaRobotNode::Motion point2;
-	// 	deltaRobotNode::Motion point3;
-	// 	deltaRobotNode::Motion point4;
-	// 	deltaRobotNode::Motion point5;
-	// 	point1.x = 0;
-	// 	point1.y = 0;
-	// 	point1.z = -5;
-	// 	point1.speed = speed;
+	// Test MoveRelativePath Service.
+	std:: cout << "Press any key to start the MoveRelativePath" << std::endl;
+	std:: cin >> keyPress; 
+	for(int z = 0; z < 10; z++){
+		deltaRobotNode::Motion point1;
+		deltaRobotNode::Motion point2;
+		deltaRobotNode::Motion point3;
+		deltaRobotNode::Motion point4;
+		deltaRobotNode::Motion point5;
+		point1.x = 0;
+		point1.y = 0;
+		point1.z = -5;
+		point1.maxAcceleration = maxAcceleration;
 
-	// 	point2.x = 20;
-	// 	point2.y = 0;
-	// 	point2.z = 0;
-	// 	point2.speed = speed;
+		point2.x = 20;
+		point2.y = 0;
+		point2.z = 0;
+		point2.maxAcceleration = maxAcceleration;
 
-	// 	point3.x = 0;
-	// 	point3.y = 20;
-	// 	point3.z = 0;
-	// 	point3.speed = speed;
+		point3.x = 0;
+		point3.y = 20;
+		point3.z = 0;
+		point3.maxAcceleration = maxAcceleration;
 
-	// 	point4.x = -20;
-	// 	point4.y = 0;
-	// 	point4.z = 0;
-	// 	point4.speed = speed;
+		point4.x = -20;
+		point4.y = 0;
+		point4.z = 0;
+		point4.maxAcceleration = maxAcceleration;
 
-	// 	point5.x = 0;
-	// 	point5.y = -20;
-	// 	point5.z = 0;
-	// 	point5.speed = speed;
-	// 	moveRelativePathService.request.motion.push_back(point1);
-	// 	moveRelativePathService.request.motion.push_back(point2);
-	// 	moveRelativePathService.request.motion.push_back(point3);
-	// 	moveRelativePathService.request.motion.push_back(point4);
-	// 	moveRelativePathService.request.motion.push_back(point5);
-	// }
-	// moveRelativePathClient.call(moveRelativePathService);
+		point5.x = 0;
+		point5.y = -20;
+		point5.z = 0;
+		point5.maxAcceleration = maxAcceleration;
+		moveRelativePathService.request.motion.push_back(point1);
+		moveRelativePathService.request.motion.push_back(point2);
+		moveRelativePathService.request.motion.push_back(point3);
+		moveRelativePathService.request.motion.push_back(point4);
+		moveRelativePathService.request.motion.push_back(point5);
+	}
+	moveRelativePathClient.call(moveRelativePathService);
 	return 0;
 }

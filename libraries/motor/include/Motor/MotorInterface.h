@@ -71,7 +71,7 @@ namespace Motor{
 		 * 
 		 * @param motorRotation Defines the angles, speed, acceleration and deceleration of the motors.
 		 **/
-	 	virtual void moveTo(const DataTypes::MotorRotation& motorRotation) = 0;
+	 	virtual void moveTo(const DataTypes::MotorRotation& motorRotation, int motionSlot) = 0;
 
 	 	/**
 		 * Rotates the motors within a certain time. The speed member of the given motion is ignored.

@@ -95,6 +95,10 @@ namespace Utilities{
 			fprintf(stream, "%s: %ld ms\n", name, timeOfStop - timeOfStart);
 		}
 
+		int getTime() {
+			return timeNow() - timeOfStart;
+		}
+
 		/**
 		 * Stops the stopwatch and prints the name of the stopwatch and the time elapsed between start and stop (now) time to the stream.
 		 *

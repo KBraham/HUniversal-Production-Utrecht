@@ -57,10 +57,10 @@ namespace Motor{
         void resetCounter(void);
         void setMotorLimits(double minAngle, double maxAngle);
 
-        void moveTo(const DataTypes::MotorRotation& motorRotation);
-        void writeRotationData(const DataTypes::MotorRotation& motorRotation, bool useDeviation = true);
+        void moveTo(const DataTypes::MotorRotation& motorRotation, int motionSlot = 1);
+        void writeRotationData(const DataTypes::MotorRotation& motorRotation, int motionSlot = 1, bool useDeviation = true);
 
-        void startMovement(void);
+        void startMovement(int motionSlot = 1);
         void moveToWithin(const DataTypes::MotorRotation& motorRotation, double time, bool start);
         void waitTillReady(void);
 
@@ -104,12 +104,13 @@ namespace Motor{
         void setDeviation(double deviation){ this->deviation = deviation; }
 
         void disableAngleLimitations(void);
-        void updateAngle(void);
+        void updateAngle(int motionSlot);
 
         void setIncrementalMode();
         void setAbsoluteMode();
 
         double getCurrentAngle();
+        bool isReady();
 
     private:
         /**
@@ -122,7 +123,7 @@ namespace Motor{
          * @var double setAngle
          * The angle most recently written to the motors. This does not mean the movement is executed.
          **/
-        double setAngle;
+        double setAngle[2];
 
         /**
          * @var double deviation

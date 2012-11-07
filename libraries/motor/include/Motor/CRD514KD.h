@@ -54,13 +54,15 @@ namespace Motor{
          * @var double MOTOR_MIN_ACCELERATION
          * The minimum acceleration in radians per second per second. This same value counts for the minimum deceleration.
          **/
-        const double MOTOR_MIN_ACCELERATION = 1.256637061;
+        const double MOTOR_MIN_ACCELERATION = MOTOR_STEP_ANGLE * 1000;
 
         /**
          * @var double MOTOR_MAX_ACCELERATION
          * The maximum acceleration in radians per second per second. This same value counts for the maximum deceleration.
          **/
-        const double MOTOR_MAX_ACCELERATION = 1256637.061;        
+        const double MOTOR_MAX_ACCELERATION = MOTOR_STEP_ANGLE * 1000000;
+
+        const double MOTOR_MAX_SPEED = MOTOR_STEP_ANGLE * 500000;      
 
         namespace Slaves{
             /**
@@ -80,20 +82,28 @@ namespace Motor{
              **/
             enum _registers{
                 // 32-bit.
-                OP_POS                  = 0x402,
-                OP_SPEED                = 0x502,
+                OP_POS1                 = 0x402,
+                OP_POS2                 = 0x404,
+                OP_SPEED1               = 0x502,
+                OP_SPEED2               = 0x504,
 
                 // 16-bit.
-                OP_POSMODE              = 0x601,
-                OP_OPMODE               = 0x701,
-                OP_SEQ_MODE             = 0x801,
+                OP_POSMODE1             = 0x601,
+                OP_POSMODE2             = 0x602,
+                OP_OPMODE1              = 0x701,
+                OP_OPMODE2              = 0x702,
+                OP_SEQMODE1             = 0x801,
+                OP_SEQMODE2             = 0x802,
 
                 // 32-bit.
-                OP_ACC                  = 0x902,
-                OP_DEC                  = 0xA02,
+                OP_ACC1                 = 0x902,
+                OP_ACC2                 = 0x904,
+                OP_DEC1                 = 0xA02,
+                OP_DEC2                 = 0xA04,
 
                 // 16-bit.
-                OP_DWELL                = 0xC01,
+                OP_DWELL1               = 0xC01,
+                OP_DWELL2               = 0xC02,
                 
                 // 32-bit.
                 CFG_POSLIMIT_POSITIVE   = 0x254,
@@ -122,7 +132,10 @@ namespace Motor{
                 OP_PRESET_POSITION = 0x048, 
 
                 // 16-bit Sets the software motor limitation (in the motor controller).
-                OP_SOFTWARE_OVERTRAVEL = 0x252 
+                OP_SOFTWARE_OVERTRAVEL = 0x252, 
+
+                // 16 bit, motor step angle setting
+                CFG_MOTOR_STEP_ANGLE = 0x311
             };
         }
 
@@ -133,7 +146,9 @@ namespace Motor{
             enum _cmd1_bits{
                 START         = (1 << 8),
                 STOP          = (1 << 11),
-                EXCITEMENT_ON = (1 << 13)
+                EXCITEMENT_ON = (1 << 13),
+                SELECT_MOTION_1 = 1,
+                SELECT_MOTION_2 = (1 << 1)
             };
         }
 
