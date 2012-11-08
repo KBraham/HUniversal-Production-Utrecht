@@ -20,7 +20,7 @@ rosbuild_add_executable(ImageTransformationNode src/ImageTransformationNode.cpp)
 
 # Include our libraries, they are all exported in Libraries/LibrariesExport.cmake
 
-include_directories(${LIB_UTILITIES_INCLUDE} ${Boost_INCLUDE_DIRS} ${NODE_DOT_MATRIX})
+include_directories(${LIB_UTILITIES_INCLUDE} ${Boost_INCLUDE_DIRS} ${NODE_DOT_MATRIX_PRINTER})
 
 target_link_libraries(ImageTransformationNode utilities ${Boost_SYSTEM_LIBRARY})
 

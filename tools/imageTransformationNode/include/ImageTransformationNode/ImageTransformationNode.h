@@ -44,7 +44,7 @@
 
 #include "Topics.h"
 #include "Utilities/Utilities.h"
-#include "DotMatrixNode/DotMatrixNodeSettings.h"
+#include "DotMatrixPrinterNode/DotMatrixPrinterNodeSettings.h"
 
 /**
  * Transforms an image to the correct pixel size and a black and white format so it can be printed by the deltaRobot.

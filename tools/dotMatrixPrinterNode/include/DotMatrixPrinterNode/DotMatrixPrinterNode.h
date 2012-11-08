@@ -31,28 +31,25 @@
 
 #pragma once
 
+#include <iostream>
+#include <sstream>
+
 #include "ros/ros.h"
-#include <image_transport/image_transport.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <iostream>
-#include <sstream>
+#include <cv_bridge/cv_bridge.h>
+#include <image_transport/image_transport.h>
+#include <sensor_msgs/image_encodings.h>
+
 #include <deltaRobotNode/MoveToPoint.h>
 #include <deltaRobotNode/MovePath.h>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <image_transport/image_transport.h>
-#include <opencv2/highgui/highgui.hpp>
-#include <cv_bridge/cv_bridge.h>
-#include <sensor_msgs/image_encodings.h>
-
-class DotMatrixNode {
+class DotMatrixPrinterNode {
 public:
 
-	DotMatrixNode( );
-	virtual ~DotMatrixNode( );
+	DotMatrixPrinterNode( );
+	virtual ~DotMatrixPrinterNode( );
 
 	void drawDot(int x, int y);
 	void drawDotToPath(int x, int y);

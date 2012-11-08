@@ -29,7 +29,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
- namespace DotMatrixNodeSettings {
+ namespace DotMatrixPrinterNodeSettings {
 
 	/**
 	 * @var static const unsigned int DRAW_FIELD_HEIGHT

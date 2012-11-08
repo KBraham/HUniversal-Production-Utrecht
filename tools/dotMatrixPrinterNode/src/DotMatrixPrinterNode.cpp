@@ -29,32 +29,30 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#include "iostream"
 #include <assert.h>
-#include "ros/ros.h"
-#include <DotMatrixNode/DotMatrixNode.h>
-#include <DotMatrixNode/DotMatrixNodeSettings.h>
+#include <DotMatrixPrinterNode/DotMatrixPrinterNode.h>
+#include <DotMatrixPrinterNode/DotMatrixPrinterNodeSettings.h>
 #include <DeltaRobotNode/Services.h>
 #include <ImageTransformationNode/Topics.h>
 #include <Utilities/Utilities.h>
 
-#define NODE_NAME "GripperNode"
+#define NODE_NAME "DotMatrixPrinterNode"
 
-DotMatrixNode::DotMatrixNode( ) :
+DotMatrixPrinterNode::DotMatrixPrinterNode( ) :
 		imageTransport(nodeHandle), deltaRobotClient(nodeHandle.serviceClient<deltaRobotNode::MoveToPoint>(DeltaRobotNodeServices::MOVE_TO_POINT)), deltaRobotPathClient(nodeHandle.serviceClient<deltaRobotNode::MovePath>(DeltaRobotNodeServices::MOVE_PATH)) {
 	moveToPointService.request.motion.x = 0;
 	moveToPointService.request.motion.y = 0;
-	moveToPointService.request.motion.z = DotMatrixNodeSettings::DRAW_FIELD_Z_HIGH;
-	moveToPointService.request.motion.speed = DotMatrixNodeSettings::SPEED;
+	moveToPointService.request.motion.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_HIGH;
+	moveToPointService.request.motion.speed = DotMatrixPrinterNodeSettings::SPEED;
 
 	point.x = 0;
 	point.y = 0;
-	point.z = DotMatrixNodeSettings::DRAW_FIELD_Z_HIGH;
-	point.speed = DotMatrixNodeSettings::SPEED;
+	point.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_HIGH;
+	point.speed = DotMatrixPrinterNodeSettings::SPEED;
 
 }
 
-DotMatrixNode::~DotMatrixNode( ) {
+DotMatrixPrinterNode::~DotMatrixPrinterNode( ) {
 
 }
 
@@ -63,24 +61,24 @@ DotMatrixNode::~DotMatrixNode( ) {
  * @param x X coordinate of the dotted pixel
  * @param y Y coordinate of the dotted pixel
  **/
-void DotMatrixNode::drawDot(int x, int y) {
+void DotMatrixPrinterNode::drawDot(int x, int y) {
 	// Move to X, Y, Zhigh
 	moveToPointService.request.motion.x = x;
 	moveToPointService.request.motion.y = y;
-	moveToPointService.request.motion.z = DotMatrixNodeSettings::DRAW_FIELD_Z_HIGH;
+	moveToPointService.request.motion.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_HIGH;
 	deltaRobotClient.call(moveToPointService);
 
 	// Move to X, Y, Zlow
 	// TODO: find the Z for drawing
 	moveToPointService.request.motion.x = x;
 	moveToPointService.request.motion.y = y;
-	moveToPointService.request.motion.z = DotMatrixNodeSettings::DRAW_FIELD_Z_LOW;
+	moveToPointService.request.motion.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_LOW;
 	deltaRobotClient.call(moveToPointService);
 
 	// Move to X, Y, Zhigh
 	moveToPointService.request.motion.x = x;
 	moveToPointService.request.motion.y = y;
-	moveToPointService.request.motion.z = DotMatrixNodeSettings::DRAW_FIELD_Z_HIGH;
+	moveToPointService.request.motion.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_HIGH;
 	deltaRobotClient.call(moveToPointService);
 
 	// Done dotting?
@@ -93,13 +91,13 @@ void DotMatrixNode::drawDot(int x, int y) {
  * @param x X coordinate of the dotted pixel
  * @param y Y coordinate of the dotted pixel
  **/
-void DotMatrixNode::drawDotToPath(int x, int y) {
+void DotMatrixPrinterNode::drawDotToPath(int x, int y) {
 	point.x = x;
 	point.y = y;
 	movePathService.request.motion.push_back(point);
-	point.z = DotMatrixNodeSettings::DRAW_FIELD_Z_LOW;
+	point.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_LOW;
 	movePathService.request.motion.push_back(point);
-	point.z = DotMatrixNodeSettings::DRAW_FIELD_Z_HIGH;
+	point.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_HIGH;
 	movePathService.request.motion.push_back(point);
 }
 
@@ -108,7 +106,7 @@ void DotMatrixNode::drawDotToPath(int x, int y) {
  *
  * @param msg The pointer to the message that contains the camera image.
  **/
-void DotMatrixNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
+void DotMatrixPrinterNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 	bool pathDrawing = true;
 
 	// Receive image
@@ -125,8 +123,8 @@ void DotMatrixNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 	int cols = cv_ptr->image.cols;
 	int rows = cv_ptr->image.rows;
 
-	assert(cols <= DotMatrixNodeSettings::DRAW_FIELD_WIDTH * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM);
-	assert(rows <= DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM);
+	assert(cols <= DotMatrixPrinterNodeSettings::DRAW_FIELD_WIDTH * DotMatrixPrinterNodeSettings::DRAW_FIELD_DOTS_PER_MM);
+	assert(rows <= DotMatrixPrinterNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixPrinterNodeSettings::DRAW_FIELD_DOTS_PER_MM);
 
 	// Calculate X,Y by converting X,Y in pixels to X,Y in mm
 	// ===========
@@ -136,8 +134,8 @@ void DotMatrixNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 	// =---------=	o = Offset starting point of the deltaRobot (drawX, drawY)
 	// =---------=
 	// ===========
-	double drawX = -(DotMatrixNodeSettings::DRAW_FIELD_WIDTH / 2.0) + ((DotMatrixNodeSettings::DRAW_FIELD_WIDTH * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM - cols) / 2.0);
-	double drawY = (DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0) - ((DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM - rows) / 2.0);
+	double drawX = -(DotMatrixPrinterNodeSettings::DRAW_FIELD_WIDTH / 2.0) + ((DotMatrixPrinterNodeSettings::DRAW_FIELD_WIDTH * DotMatrixPrinterNodeSettings::DRAW_FIELD_DOTS_PER_MM - cols) / 2.0);
+	double drawY = (DotMatrixPrinterNodeSettings::DRAW_FIELD_HEIGHT / 2.0) - ((DotMatrixPrinterNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixPrinterNodeSettings::DRAW_FIELD_DOTS_PER_MM - rows) / 2.0);
 
 	// Clear the old path.
 	if (pathDrawing) {
@@ -156,7 +154,7 @@ void DotMatrixNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 						drawDotToPath(drawX, drawY); //path drawing
 					}
 				}
-				drawX += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+				drawX += DotMatrixPrinterNodeSettings::DRAW_FIELD_MM_PER_DOTS;
 			}
 		} else {
 			for (; pixelPointer % cols != 0; pixelPointer--) {
@@ -167,11 +165,11 @@ void DotMatrixNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 						drawDotToPath(drawX, drawY); //path drawing
 					}
 				}
-				drawX -= DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+				drawX -= DotMatrixPrinterNodeSettings::DRAW_FIELD_MM_PER_DOTS;
 			}
 		}
 		pixelPointer += cols;
-		drawY -= DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
+		drawY -= DotMatrixPrinterNodeSettings::DRAW_FIELD_MM_PER_DOTS;
 	}
 
 	if (pathDrawing) {
@@ -186,8 +184,8 @@ void DotMatrixNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
  * Spins in ROS to receive frames. These will execute the callbacks.
  * This function ends when ros receives a ^c
  **/
-void DotMatrixNode::run( ) {
-	imageSubscriber = imageTransport.subscribe(ImageTransformationNodeTopics::TRANSFORMED_IMAGE, 1, &DotMatrixNode::imageCallback, this, image_transport::TransportHints("compressed"));
+void DotMatrixPrinterNode::run( ) {
+	imageSubscriber = imageTransport.subscribe(ImageTransformationNodeTopics::TRANSFORMED_IMAGE, 1, &DotMatrixPrinterNode::imageCallback, this, image_transport::TransportHints("compressed"));
 
 	while (ros::ok()) {
 		ros::spinOnce();
@@ -197,8 +195,9 @@ void DotMatrixNode::run( ) {
 int main(int argc, char** argv) {
 
 	ros::init(argc, argv, NODE_NAME);
+	std::cout << "HOI!" << std::endl;
 
-	DotMatrixNode dotMatrixNode;
+	DotMatrixPrinterNode dotMatrixNode;
 	dotMatrixNode.run();
 
 	return 0;

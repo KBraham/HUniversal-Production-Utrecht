@@ -103,7 +103,7 @@ void ImageTransformationNode::transformCallback(const sensor_msgs::ImageConstPtr
 		return;
 	}
 
-	cv_ptr->image = cv::imread("/home/kbraham/Pictures/black_line_110.png");
+	cv_ptr->image = cv::imread("/home/kbraham/Pictures/daniel.png");
 	//cv_ptr->image = cv::imread("/home/kbraham/Pictures/black_field.png");
 	if(cv_ptr->image.data == NULL){
 		std::cerr << "Invalid image" << std::endl;
@@ -112,8 +112,8 @@ void ImageTransformationNode::transformCallback(const sensor_msgs::ImageConstPtr
 
 	//calculating scale such that the entire picture will fit, with respect to aspect ratio, on the draw field.
 	double scale = std::max(
-		cv_ptr->image.rows / (DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM), 
-		cv_ptr->image.cols / (DotMatrixNodeSettings::DRAW_FIELD_WIDTH * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM));
+		cv_ptr->image.rows / (DotMatrixPrinterNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixPrinterNodeSettings::DRAW_FIELD_DOTS_PER_MM), 
+		cv_ptr->image.cols / (DotMatrixPrinterNodeSettings::DRAW_FIELD_WIDTH * DotMatrixPrinterNodeSettings::DRAW_FIELD_DOTS_PER_MM));
 	//size should not be at least 1 pixel in height and 1 pixel in width
 	cv::Size outputSize = cv::Size(
 		cv_ptr->image.cols / scale < 1 ? 1 : cv_ptr->image.cols / scale, 
