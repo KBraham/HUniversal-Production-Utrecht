@@ -85,17 +85,6 @@ void DotMatrixNode::run( ) {
 		pixelPointer += width;
 		drawY += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
 	}
-
-	//for (unsigned int i = 0; i < gimp_image.height * gimp_image.width * gimp_image.bytes_per_pixel; i += gimp_image.bytes_per_pixel) {
-	//	if (i % 50 == 0) {
-	//		std::cout << std::endl;
-	//	}
-	//	if (gimp_image.pixel_data[i] == 0 && gimp_image.pixel_data[i] == gimp_image.pixel_data[i + 1] && gimp_image.pixel_data[i + 1] == gimp_image.pixel_data[i + 2]) {
-	//		std::cout << "#";
-	//	} else {
-	//		std::cout << " ";
-	//	}
-	//}
 }
 
 int main(int argc, char** argv) {
