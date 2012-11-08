@@ -35,12 +35,12 @@
 	 * @var static const unsigned int DRAW_FIELD_HEIGHT
 	 * Height of the field that is drawable by the deltarobot.
 	 */
-	static const unsigned int DRAW_FIELD_HEIGHT = 175;
+	static const unsigned int DRAW_FIELD_HEIGHT = 155;
 	/**
 	 * @var static const unsigned int DRAW_FIELD_WIDTH
 	 * Width of the field that is drawable by the deltarobot.
 	 */
-	static const unsigned int DRAW_FIELD_WIDTH = 110;
+	static const unsigned int DRAW_FIELD_WIDTH = 90;
 
 	/**
 	 * @var static const double DRAW_FIELD_DOTS_PER_MM
@@ -62,12 +62,12 @@
 	 * @var static const double DRAW_FIELD_Z_HIGH
 	 * The z position where the pen doesn't reach the paper, and is just safe for movement.
 	 **/
-	static const double DRAW_FIELD_Z_HIGH = -230;//TODO: ?
+	static const double DRAW_FIELD_Z_HIGH = -245;//TODO: ?
 
 	/**
 	 * @var static const double SPEED
 	 * The speed for the delta robot.
 	 **/
-	static const double SPEED = 360;
+	static const double SPEED = 720;
 
 }

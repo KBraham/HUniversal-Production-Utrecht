@@ -34,14 +34,14 @@
 #include "ros/ros.h"
 #include <DotMatrixNode/DotMatrixNode.h>
 #include <DotMatrixNode/DotMatrixNodeSettings.h>
-#include <DotMatrixNode/Image.h>
 #include <DeltaRobotNode/Services.h>
 #include <ImageTransformationNode/Topics.h>
+#include <Utilities/Utilities.h>
 
 #define NODE_NAME "GripperNode"
 
 DotMatrixNode::DotMatrixNode( ) :
-	imageTransport(nodeHandle), deltaRobotClient(nodeHandle.serviceClient<deltaRobotNode::MoveToPoint>(DeltaRobotNodeServices::MOVE_TO_POINT)), deltaRobotPathClient(nodeHandle.serviceClient<deltaRobotNode::MovePath>(DeltaRobotNodeServices::MOVE_PATH)) {
+		imageTransport(nodeHandle), deltaRobotClient(nodeHandle.serviceClient<deltaRobotNode::MoveToPoint>(DeltaRobotNodeServices::MOVE_TO_POINT)), deltaRobotPathClient(nodeHandle.serviceClient<deltaRobotNode::MovePath>(DeltaRobotNodeServices::MOVE_PATH)) {
 	moveToPointService.request.motion.x = 0;
 	moveToPointService.request.motion.y = 0;
 	moveToPointService.request.motion.z = DotMatrixNodeSettings::DRAW_FIELD_Z_HIGH;
@@ -136,32 +136,35 @@ void DotMatrixNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 	// =---------=	o = Offset starting point of the deltaRobot (drawX, drawY)
 	// =---------=
 	// ===========
-	double drawX = -(DotMatrixNodeSettings::DRAW_FIELD_WIDTH / 2.0) 
-		+ ((DotMatrixNodeSettings::DRAW_FIELD_WIDTH * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM - cols) / 2.0);
-	double drawY = (DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0)
-		+ ((DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM - rows) / 2.0);
+	double drawX = -(DotMatrixNodeSettings::DRAW_FIELD_WIDTH / 2.0) + ((DotMatrixNodeSettings::DRAW_FIELD_WIDTH * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM - cols) / 2.0);
+	double drawY = (DotMatrixNodeSettings::DRAW_FIELD_HEIGHT / 2.0) - ((DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM - rows) / 2.0);
+
+	// Clear the old path.
+	if (pathDrawing) {
+		movePathService.request.motion.clear();
+	}
 
 	unsigned int pixelPointer = 0;
 	// moves left to right, right to left
 	for (int j = 0; j < rows; j++) {
 		if (j % 2 == 0) {
 			for (; (pixelPointer + 1) % cols != 0; pixelPointer++) {
-				if(cv_ptr->image.data[pixelPointer] == 0){
-					if(!pathDrawing){
-						drawDot(drawX, drawY);//point for point drawing
+				if (cv_ptr->image.data[pixelPointer] == 0) {
+					if (!pathDrawing) {
+						drawDot(drawX, drawY); //point for point drawing
 					} else {
-						drawDotToPath(drawX, drawY);//path drawing
+						drawDotToPath(drawX, drawY); //path drawing
 					}
 				}
 				drawX += DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
 			}
 		} else {
 			for (; pixelPointer % cols != 0; pixelPointer--) {
-				if(cv_ptr->image.data[pixelPointer] == 0){
-					if(!pathDrawing){
-						drawDot(drawX, drawY);//point for point drawing
+				if (cv_ptr->image.data[pixelPointer] == 0) {
+					if (!pathDrawing) {
+						drawDot(drawX, drawY); //point for point drawing
 					} else {
-						drawDotToPath(drawX, drawY);//path drawing
+						drawDotToPath(drawX, drawY); //path drawing
 					}
 				}
 				drawX -= DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
@@ -170,7 +173,12 @@ void DotMatrixNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 		pixelPointer += cols;
 		drawY -= DotMatrixNodeSettings::DRAW_FIELD_MM_PER_DOTS;
 	}
-	deltaRobotPathClient.call(movePathService);//path drawing
+
+	if (pathDrawing) {
+		Utilities::StopWatch stopwatch("PathTimer", true);
+		deltaRobotPathClient.call(movePathService); //path drawing
+		stopwatch.stopAndPrint(stdout);
+	}
 }
 
 /**
@@ -181,7 +189,7 @@ void DotMatrixNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 void DotMatrixNode::run( ) {
 	imageSubscriber = imageTransport.subscribe(ImageTransformationNodeTopics::TRANSFORMED_IMAGE, 1, &DotMatrixNode::imageCallback, this, image_transport::TransportHints("compressed"));
 
-	while(ros::ok()) {
+	while (ros::ok()) {
 		ros::spinOnce();
 	}
 }
