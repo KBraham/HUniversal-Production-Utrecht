@@ -30,6 +30,6 @@ sync.sh
 *.sublime-project
 *.sublime-workspace
 *~
-
+force_node_to_normal.sh
 
 
