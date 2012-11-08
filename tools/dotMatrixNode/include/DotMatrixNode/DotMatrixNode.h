@@ -4,6 +4,7 @@
  * @date Created: 2012-11-06
  *
  * @author Koen Braham
+ * @author Daan Veltman
  *
  * @section LICENSE
  * License: newBSD
@@ -38,6 +39,7 @@
 #include <iostream>
 #include <sstream>
 #include <deltaRobotNode/MoveToPoint.h>
+#include <deltaRobotNode/MovePath.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -53,6 +55,7 @@ public:
 	virtual ~DotMatrixNode( );
 
 	void drawDot(int x, int y);
+	void drawDotToPath(int x, int y);
 
 	void imageCallback(const sensor_msgs::ImageConstPtr& msg);
 	void run( );
@@ -77,5 +80,23 @@ private:
 	image_transport::Subscriber imageSubscriber;
 
 	ros::ServiceClient deltaRobotClient;
+	ros::ServiceClient deltaRobotPathClient;
+	/**
+	 * @var deltaRobotNode::MoveToPoint moveToPointService
+	 * Service to move the deltaRobot to a specific point.
+	 **/
 	deltaRobotNode::MoveToPoint moveToPointService;
+
+	/**
+	 * @var deltaRobotNode::MovePath movePathService
+	 * Service to move the deltaRobot along a path.
+	 **/
+	deltaRobotNode::MovePath movePathService;
+
+	/**
+	 * @var deltaRobotNode::Motion point
+	 * Point for the movePathService.
+	 **/
+	deltaRobotNode::Motion point;
+
 };
