@@ -110,10 +110,14 @@ void ImageTransformationNode::transformCallback(const sensor_msgs::ImageConstPtr
 		exit(1);
 	}
 
+	//calculating scale such that the entire picture will fit, with respect to aspect ratio, on the draw field.
 	double scale = std::max(
 		cv_ptr->image.rows / (DotMatrixNodeSettings::DRAW_FIELD_HEIGHT * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM), 
 		cv_ptr->image.cols / (DotMatrixNodeSettings::DRAW_FIELD_WIDTH * DotMatrixNodeSettings::DRAW_FIELD_DOTS_PER_MM));
-	cv::Size outputSize = cv::Size(cv_ptr->image.cols / scale, cv_ptr->image.rows / scale);
+	//size should not be at least 1 pixel in height and 1 pixel in width
+	cv::Size outputSize = cv::Size(
+		cv_ptr->image.cols / scale < 1 ? 1 : cv_ptr->image.cols / scale, 
+		cv_ptr->image.rows / scale < 1 ? 1 : cv_ptr->image.rows / scale);
 
 	cv::Mat resizedImage;
 	cv::resize(cv_ptr->image, resizedImage, outputSize);
