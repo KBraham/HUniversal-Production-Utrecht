@@ -37,6 +37,14 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <sstream>
+#include <deltaRobotNode/MoveToPoint.h>
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <image_transport/image_transport.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
 
 class DotMatrixNode {
 public:
@@ -46,6 +54,7 @@ public:
 
 	void drawDot(int x, int y);
 
+	void imageCallback(const sensor_msgs::ImageConstPtr& msg);
 	void run( );
 private:
 
@@ -65,7 +74,7 @@ private:
 	 * @var image_transport::Subscriber cameraSubscriber
 	 * Subscription to the camera topic for receiving frames.
 	 **/
-	image_transport::Subscriber cameraSubscriber;
+	image_transport::Subscriber imageSubscriber;
 
 	ros::ServiceClient deltaRobotClient;
 	deltaRobotNode::MoveToPoint moveToPointService;

@@ -26,11 +26,11 @@ namespace DotMatrixNodeSettings {
 	 * @var static const double DRAW_FIELD_Z_LOW
 	 * The z position where the pen reaches the paper.
 	 **/
-	static const double DRAW_FIELD_Z_LOW = 300;//TODO: ?
+	static const double DRAW_FIELD_Z_LOW = -250;//TODO: ?
 	/**
 	 * @var static const double DRAW_FIELD_Z_HIGH
 	 * The z position where the pen doesn't reach the paper, and is just safe for movement.
 	 **/
-	static const double DRAW_FIELD_Z_HIGH = 280;//TODO: ?
+	static const double DRAW_FIELD_Z_HIGH = -230;//TODO: ?
 
 }

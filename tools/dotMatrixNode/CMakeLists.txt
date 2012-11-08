@@ -19,7 +19,7 @@ rosbuild_add_executable(DotMatrixNode src/DotMatrixNode.cpp)
 
 # Include our libraries, they are all exported in Libraries/LibrariesExport.cmake
 
-include_directories(${LIB_UTILITIES_INCLUDE} ${Boost_INCLUDE_DIRS})
+include_directories(${LIB_UTILITIES_INCLUDE} ${Boost_INCLUDE_DIRS} ${NODE_DELTA_ROBOT} ${NODE_IMAGE_TRANSFORMATION})
 
 target_link_libraries(DotMatrixNode utilities ${Boost_SYSTEM_LIBRARY})
 
