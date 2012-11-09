@@ -233,6 +233,9 @@ namespace Motor{
 	void StepperMotor::moveToWithin(const DataTypes::MotorRotation& motorRotation, double time, bool start){
 		DataTypes::MotorRotation newMotorRotation = motorRotation;
 		newMotorRotation.speed = fabs(currentAngle - motorRotation.angle) / time;
+		if(newMotorRotation.speed == 0){
+			newMotorRotation.speed = 1;
+		}
 		if(start){
 			moveTo(newMotorRotation);
 		} else{
