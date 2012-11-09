@@ -184,8 +184,11 @@ namespace ModbusController{
             if(slave == 0 && errno == MODBUS_ERRNO_TIMEOUT){
                 return;
             }
-            
-            throw ModbusException("Error writing u16");
+            std::stringstream ss;
+            ss << "Error writing u16" << std::endl;
+            ss << "Address: " << address << std::endl;
+            ss << "Data: " << data << std::endl;
+            throw ModbusException(ss.str());
         }
         
         if(useShadow){
