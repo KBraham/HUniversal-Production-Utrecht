@@ -177,6 +177,13 @@ void DotMatrixPrinterNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) 
 		deltaRobotPathClient.call(movePathService); //path drawing
 		stopwatch.stopAndPrint(stdout);
 	}
+
+
+	// Move back to its starting point.
+	moveToPointService.request.motion.x = 0;
+	moveToPointService.request.motion.y = 0;
+	moveToPointService.request.motion.z = -196.063;
+	deltaRobotPathClient.call(movePathService);
 }
 
 /**
@@ -187,15 +194,18 @@ void DotMatrixPrinterNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) 
 void DotMatrixPrinterNode::run( ) {
 	imageSubscriber = imageTransport.subscribe(ImageTransformationNodeTopics::TRANSFORMED_IMAGE, 1, &DotMatrixPrinterNode::imageCallback, this, image_transport::TransportHints("compressed"));
 
+	ros::Rate loopRate(1);
+
 	while (ros::ok()) {
 		ros::spinOnce();
+		loopRate.sleep();
 	}
 }
 
 int main(int argc, char** argv) {
 
 	ros::init(argc, argv, NODE_NAME);
-	std::cout << "HOI!" << std::endl;
+	std::cout << "DotMatrixPrinter started. Waiting for a picture on " << ImageTransformationNodeTopics::TRANSFORMED_IMAGE << std::endl;
 
 	DotMatrixPrinterNode dotMatrixNode;
 	dotMatrixNode.run();
