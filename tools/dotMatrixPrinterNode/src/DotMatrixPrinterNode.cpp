@@ -39,7 +39,7 @@
 #define NODE_NAME "DotMatrixPrinterNode"
 
 DotMatrixPrinterNode::DotMatrixPrinterNode( ) :
-		imageTransport(nodeHandle), deltaRobotClient(nodeHandle.serviceClient<deltaRobotNode::MoveToPoint>(DeltaRobotNodeServices::MOVE_TO_POINT)), deltaRobotPathClient(nodeHandle.serviceClient<deltaRobotNode::MovePath>(DeltaRobotNodeServices::MOVE_PATH)) {
+		imageTransport(nodeHandle), deltaRobotClient(nodeHandle.serviceClient<deltaRobotNode::MoveToPoint>(DeltaRobotNodeServices::MOVE_TO_POINT)), deltaRobotPathClient(nodeHandle.serviceClient<deltaRobotNode::MovePath>(DeltaRobotNodeServices::MOVE_PATH)), Z_LOW(0), Z_HIGH(0) {
 	moveToPointService.request.motion.x = 0;
 	moveToPointService.request.motion.y = 0;
 	moveToPointService.request.motion.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_HIGH;
@@ -65,20 +65,20 @@ void DotMatrixPrinterNode::drawDot(int x, int y) {
 	// Move to X, Y, Zhigh
 	moveToPointService.request.motion.x = x;
 	moveToPointService.request.motion.y = y;
-	moveToPointService.request.motion.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_HIGH;
+	moveToPointService.request.motion.z = Z_HIGH;
 	deltaRobotClient.call(moveToPointService);
 
 	// Move to X, Y, Zlow
 	// TODO: find the Z for drawing
 	moveToPointService.request.motion.x = x;
 	moveToPointService.request.motion.y = y;
-	moveToPointService.request.motion.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_LOW;
+	moveToPointService.request.motion.z = Z_LOW;
 	deltaRobotClient.call(moveToPointService);
 
 	// Move to X, Y, Zhigh
 	moveToPointService.request.motion.x = x;
 	moveToPointService.request.motion.y = y;
-	moveToPointService.request.motion.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_HIGH;
+	moveToPointService.request.motion.z = Z_HIGH;
 	deltaRobotClient.call(moveToPointService);
 
 	// Done dotting?
@@ -95,9 +95,9 @@ void DotMatrixPrinterNode::drawDotToPath(int x, int y) {
 	point.x = x;
 	point.y = y;
 	movePathService.request.motion.push_back(point);
-	point.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_LOW;
+	point.z = Z_LOW;
 	movePathService.request.motion.push_back(point);
-	point.z = DotMatrixPrinterNodeSettings::DRAW_FIELD_Z_HIGH;
+	point.z = Z_HIGH;
 	movePathService.request.motion.push_back(point);
 }
 
@@ -192,7 +192,40 @@ void DotMatrixPrinterNode::imageCallback(const sensor_msgs::ImageConstPtr& msg) 
  * This function ends when ros receives a ^c
  **/
 void DotMatrixPrinterNode::run( ) {
+	std::cout << "Calibrating pencil thingy" << std::endl;
+
+	Z_LOW = -196.063;
+
+	char in;
+	while(true){
+		std::cin >> in;
+		if(in == 'q' || in == 'Q'){
+			Z_HIGH = Z_LOW + 5;
+
+
+			break;
+		} else {
+			Z_LOW -= 1;
+			moveToPointService.request.motion.x = 0;
+			moveToPointService.request.motion.y = 0;
+			moveToPointService.request.motion.z = Z_LOW;
+
+			deltaRobotClient.call(moveToPointService);
+		}
+	}
+
+	// Move back to its starting point.
+	moveToPointService.request.motion.x = 0;
+	moveToPointService.request.motion.y = 0;
+	moveToPointService.request.motion.z = -196.063;
+	deltaRobotPathClient.call(movePathService);
+
+	std::cout << "Ready for drawing, right click on the image to start!." << std::endl;
+
+
 	imageSubscriber = imageTransport.subscribe(ImageTransformationNodeTopics::TRANSFORMED_IMAGE, 1, &DotMatrixPrinterNode::imageCallback, this, image_transport::TransportHints("compressed"));
+
+
 
 	ros::Rate loopRate(1);
 

@@ -96,4 +96,6 @@ private:
 	 **/
 	deltaRobotNode::Motion point;
 
+
+	double Z_LOW, Z_HIGH;
 };
