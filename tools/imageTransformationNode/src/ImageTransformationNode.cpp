@@ -103,12 +103,12 @@ void ImageTransformationNode::transformCallback(const sensor_msgs::ImageConstPtr
 		return;
 	}
 
-	cv_ptr->image = cv::imread("/home/kbraham/Pictures/daniel.png");
+	//cv_ptr->image = cv::imread("/home/kbraham/Pictures/daniel.png");
 	//cv_ptr->image = cv::imread("/home/kbraham/Pictures/black_field.png");
-	if(cv_ptr->image.data == NULL){
-		std::cerr << "Invalid image" << std::endl;
-		exit(1);
-	}
+	//if(cv_ptr->image.data == NULL){
+	//	std::cerr << "Invalid image" << std::endl;
+	//	exit(1);
+	//}
 
 	//calculating scale such that the entire picture will fit, with respect to aspect ratio, on the draw field.
 	double scale = std::max(
